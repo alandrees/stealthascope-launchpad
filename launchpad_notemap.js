@@ -363,6 +363,18 @@ var ModernModes =
    [0, 1, 3, 5, 6, 8, 10, 12]   // Locrian
 ];
 
+var ModernModesNames =
+[
+  ['Ionian'],
+  ['Dorian'],
+  ['Phrygian'],
+  ['Lydian'],
+  ['Mixolydian'],
+  ['Aeolian'],
+  ['Locrian']
+
+];
+
 diatonicNoteMap = new NoteMap();
 diatonicNoteMap.mode = 0;
 
@@ -395,12 +407,14 @@ diatonicNoteMap.scrollLeft = function()
 {
    this.mode = Math.max(0, this.mode - 1);
    updateNoteTranlationTable();
+   host.showPopupNotification("Scale: " + ModernModesNames[this.mode]);
 };
 
 diatonicNoteMap.scrollRight = function()
 {
    this.mode = Math.min(ModernModes.length - 1, this.mode + 1);
    updateNoteTranlationTable();
+   host.showPopupNotification("Scale: " + ModernModesNames[this.mode]);
 };
 
 diatonicNoteMap.canScrollUp = function()
