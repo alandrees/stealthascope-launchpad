@@ -1,7 +1,7 @@
 
 loadAPI(1);
 
-host.defineController("Novation", "Launchpad", "1.0", "DC7C601D-C6D9-4627-875C-D0AA527BA73A");
+host.defineController("loridcon", "Launchpada", "1.0", "56C39552-B0F3-4A97-A45F-129B25472C23");
 host.defineMidiPorts(1, 1);
 host.addDeviceNameBasedDiscoveryPair(["Launchpad"], ["Launchpad"]);
 host.addDeviceNameBasedDiscoveryPair(["Launchpad S"], ["Launchpad S"]);
