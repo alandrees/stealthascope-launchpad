@@ -32,9 +32,9 @@ var TempMode =
    SEND_B:3,
    TRACK:4,
    SCENE:5,
-   DEVICE:6,
-   USER1:7,
-   USER2:8
+   USER1:6,
+   USER2:7,
+   USER3:8
 };
 
 load("launchpad_constants.js");
@@ -186,9 +186,9 @@ function init()
       masterVuMeter = level;
    });
 
-   userControls = host.createUserControlsSection(16);
+   userControls = host.createUserControlsSection(24);
 
-   for(var u=0; u<16; u++)
+   for(var u=0; u<24; u++)
    {
       var control = userControls.getControl(u);
 
@@ -306,6 +306,8 @@ function updateVelocityTranslationTable()
 
 function onMidi(status, data1, data2)
 {
+	 //printMidi(status, data1, data2);
+
    if (MIDIChannel(status) != 0) return;
 
    if (isChannelController(status))
