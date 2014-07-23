@@ -76,20 +76,16 @@ gridPage.onSceneButton = function(row, isPressed)
             this.setTempMode(TempMode.SEND_B);
             break;
 
-         case MixerButton.PAN:
-            this.setTempMode(TempMode.PAN);
-            break;
-
          case MixerButton.STOP:
-            this.setTempMode(TempMode.DEVICE);
-            break;
-
-         case MixerButton.TRK_ON:
             this.setTempMode(TempMode.USER1);
             break;
 
-         case MixerButton.SOLO:
+         case MixerButton.TRK_ON:
             this.setTempMode(TempMode.USER2);
+            break;
+
+         case MixerButton.SOLO:
+            this.setTempMode(TempMode.USER3);
             break;
 
          case MixerButton.ARM:
@@ -219,11 +215,11 @@ gridPage.onGridButton = function(row, column, pressed)
             break;
 
          case TempMode.USER2:
-            userControls.getControl(row).set(column + 8, 8);
+            userControls.getControl(row + 8).set(column, 8);
             break;
 
          case TempMode.USER3:
-            userControls.getControl(row).set(column + 16, 8);
+            userControls.getControl(row + 16).set(column, 8);
             break;
       }
    }
@@ -300,15 +296,15 @@ gridPage.updateVuMeter = function(track)
          if (track === 3) colour = Colour.GREEN_FULL;
          break;
 
-      case TempMode.DEVICE:
+      case TempMode.USER1:
          if (track === 4) colour = Colour.AMBER_FULL;
          break;
 
-      case TempMode.USER1:
+      case TempMode.USER2:
          if (track === 5) colour = Colour.GREEN_FULL;
          break;
 
-      case TempMode.USER2:
+      case TempMode.USER3:
          if (track === 6) colour = Colour.GREEN_FULL;
          break;
 
@@ -421,6 +417,9 @@ gridPage.updateTrackValue = function(track)
 
          case TempMode.USER2:
             value = userValue[track + 8];
+            break;
+         case TempMode.USER3:
+            value = userValue[track + 16];
             break;
       }
 
