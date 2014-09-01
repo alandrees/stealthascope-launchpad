@@ -30,7 +30,7 @@ console.log = function(string)
     println(string);
 }
 
-load("lp_controller_object.js");
+load("launchpad_controller_object.js");
 load("launchpad_constants.js");
 load("launchpad_grid.js");
 
