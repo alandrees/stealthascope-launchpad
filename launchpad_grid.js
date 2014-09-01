@@ -3,103 +3,99 @@
 *  GRID PAGE
 *
 * */
-
-gridPage = new Page();
-
-gridPage.mixerAlignedGrid = false;
-gridPage.canScrollTracksUp = false;
-gridPage.canScrollTracksDown = false;
-gridPage.canScrollScenesUp = false;
-gridPage.canScrollScenesDown = false;
-gridPage.title = "Clip Launcher";
-
-gridPage.updateOutputState = function()
+if(typeof Launchpad.Page === 'undefined')
 {
-   clear();
-
-   this.canScrollUp = this.mixerAlignedGrid ? this.canScrollScenesUp : this.canScrollTracksUp;
-   this.canScrollDown = this.mixerAlignedGrid ? this.canScrollScenesDown : this.canScrollTracksDown;
-   this.canScrollLeft = !this.mixerAlignedGrid ? this.canScrollScenesUp : this.canScrollTracksUp;
-   this.canScrollRight = !this.mixerAlignedGrid ? this.canScrollScenesDown : this.canScrollTracksDown;
-
-   this.updateScrollButtons();
-   this.updateGrid();
-
-   setTopLED(4,
-      TEMPMODE == TempMode.SCENE
-         ? Colour.GREEN_FULL
-         : (TEMPMODE == TempMode.OFF
-         ? Colour.YELLOW_FULL
-         : Colour.OFF));
-
-   /*setTopLED(7,
-      TEMPMODE == TempMode.TRACK
-         ? Colour.GREEN_FULL
-         : Colour.OFF);*/
-
-   setTopLED(7, this.mixerAlignedGrid ? Colour.RED_FULL : Colour.RED_LOW);
-};
-
-gridPage.onShift = function(isPressed)
-{
-   if (isPressed)
-   {
-      this.mixerAlignedGrid = !this.mixerAlignedGrid;
-      //this.setTempMode(TempMode.TRACK);
-      host.showPopupNotification("Orientation: " + (this.mixerAlignedGrid ? "Mixer" : "Arranger"));
-   }
-   else
-   {
-      //this.setTempMode(TempMode.OFF);
-   }
+    load('launchpad_page.js');
 }
 
-gridPage.onSceneButton = function(row, isPressed)
+Launchpad.GridPage = function(launchpad)
+{
+    Launchpad.Page.apply(this, [launchpad]);
+    this.mixerAlignedGrid = true;
+    this.canScrollTracksUp = false;
+    this.canScrollTracksDown = false;
+    this.canScrollScenesUp = false;
+    this.canScrollScenesDown = false;
+    this.title = "Clip Launcher";
+    this.temp_mode = Launchpad.TEMPMODE.OFF;
+    this.isRecordPressed = false;
+    this.isEditPressed = false;
+
+    console.log("GridPage Object Created");
+}
+
+Launchpad.GridPage.prototype = Launchpad.Page.prototype;
+Launchpad.GridPage.prototype.constructor = Launchpad.GridPage;
+
+Launchpad.GridPage.prototype.updateOutputState = function()
+{
+    this.controller.clear();
+
+    this.canScrollUp = this.mixerAlignedGrid ? this.canScrollScenesUp : this.canScrollTracksUp;
+    this.canScrollDown = this.mixerAlignedGrid ? this.canScrollScenesDown : this.canScrollTracksDown;
+    this.canScrollLeft = !this.mixerAlignedGrid ? this.canScrollScenesUp : this.canScrollTracksUp;
+    this.canScrollRight = !this.mixerAlignedGrid ? this.canScrollScenesDown : this.canScrollTracksDown;
+
+    this.updateScrollButtons();
+    this.updateGrid();
+
+    this.controller.setTopLED(4,
+			      this.temp_mode == Launchpad.TEMPMODE.SCENE
+			      ? Launchpad.Colour.GREEN_FULL
+			      : (this.temp_mode == Launchpad.TEMPMODE.OFF
+				 ? Launchpad.Colour.YELLOW_FULL
+				 : Launchpad.Colour.OFF));
+    
+    this.controller.setTopLED(7, 
+			      this.mixerAlignedGrid ? Launchpad.Colour.RED_FULL : Launchpad.Colour.RED_LOW);
+};
+
+Launchpad.GridPage.prototype.onSceneButton = function(row, isPressed)
 {
    if (isPressed)
    {
       switch(row)
       {
          case MixerButton.VOLUME:
-            this.setTempMode(TempMode.VOLUME);
+            this.setTempMode(Launchpad.TEMPMODE.VOLUME);
             break;
 
          case MixerButton.PAN:
-            this.setTempMode(TempMode.PAN);
+            this.setTempMode(Launchpad.TEMPMODE.PAN);
             break;
 
          case MixerButton.SEND_A:
-            this.setTempMode(TempMode.SEND_A);
+            this.setTempMode(Launchpad.TEMPMODE.SEND_A);
             break;
 
          case MixerButton.SEND_B:
-            this.setTempMode(TempMode.SEND_B);
+            this.setTempMode(Launchpad.TEMPMODE.SEND_B);
             break;
 
          case MixerButton.STOP:
-            this.setTempMode(TempMode.USER1);
+            this.setTempMode(Launchpad.TEMPMODE.USER1);
             break;
 
          case MixerButton.TRK_ON:
-            this.setTempMode(TempMode.USER2);
+            this.setTempMode(Launchpad.TEMPMODE.USER2);
             break;
 
          case MixerButton.SOLO:
-            this.setTempMode(TempMode.USER3);
+            this.setTempMode(Launchpad.TEMPMODE.USER3);
             break;
 
          case MixerButton.ARM:
-            this.setTempMode(TempMode.TRACK);
+            this.setTempMode(Launchpad.TEMPMODE.TRACK);
             break;
       }
    }
    else
    {
-      this.setTempMode(TempMode.OFF);
+      this.setTempMode(Launchpad.TEMPMODE.OFF);
    }
 };
 
-gridPage.onLeft = function(isPressed)
+Launchpad.GridPage.prototype.onLeft = function(isPressed)
 {
    if (isPressed)
    {
@@ -108,7 +104,7 @@ gridPage.onLeft = function(isPressed)
    }
 };
 
-gridPage.onRight = function(isPressed)
+Launchpad.GridPage.prototype.onRight = function(isPressed)
 {
    if (isPressed)
    {
@@ -117,7 +113,7 @@ gridPage.onRight = function(isPressed)
    }
 };
 
-gridPage.onUp = function(isPressed)
+Launchpad.GridPage.prototype.onUp = function(isPressed)
 {
    if (isPressed)
    {
@@ -126,7 +122,7 @@ gridPage.onUp = function(isPressed)
    }
 };
 
-gridPage.onDown = function(isPressed)
+Launchpad.GridPage.prototype.onDown = function(isPressed)
 {
    if (isPressed)
    {
@@ -135,24 +131,24 @@ gridPage.onDown = function(isPressed)
    }
 };
 
-gridPage.onGridButton = function(row, column, pressed)
+Launchpad.GridPage.prototype.onGridButton = function(row, column, pressed)
 {
    if (!pressed) return;
 
-   if (TEMPMODE === TempMode.SCENE)
+   if (this.temp_mode === Launchpad.TEMPMODE.SCENE)
    {
       trackBank.launchScene(column);
    }
-   else if (TEMPMODE === TempMode.OFF)
+   else if (this.temp_mode === Launchpad.TEMPMODE.OFF)
    {
       var track = this.mixerAlignedGrid ? column : row;
       var scene = this.mixerAlignedGrid ? row : column;
 
-      if (IS_RECORD_PRESSED)
+      if (this.is_record_pressed)
       {
          trackBank.getTrack(track).getClipLauncher().record(scene);
       }
-      else if (IS_EDIT_PRESSED)
+      else if (this.is_edit_pressed)
       {
          trackBank.getTrack(track).getClipLauncher().showInEditor(scene);
       }
@@ -161,7 +157,7 @@ gridPage.onGridButton = function(row, column, pressed)
          trackBank.getTrack(track).getClipLauncher().launch(scene);
       }
    }
-   else if (TEMPMODE === TempMode.TRACK)
+   else if (this.temp_mode === Launchpad.TEMPMODE.TRACK)
    {
       switch(column)
       {
@@ -192,49 +188,48 @@ gridPage.onGridButton = function(row, column, pressed)
    }
    else
    {
-      switch(TEMPMODE)
+      switch(this.temp_mode)
       {
-         case TempMode.VOLUME:
+         case Launchpad.TEMPMODE.VOLUME:
             trackBank.getTrack(row).getVolume().set(column, 8);
             break;
 
-         case TempMode.PAN:
+         case Launchpad.TEMPMODE.PAN:
             trackBank.getTrack(row).getPan().set(column, 8);
             break;
 
-         case TempMode.SEND_A:
+         case Launchpad.TEMPMODE.SEND_A:
             trackBank.getTrack(row).getSend(0).set(column, 8);
             break;
 
-         case TempMode.SEND_B:
+         case Launchpad.TEMPMODE.SEND_B:
             trackBank.getTrack(row).getSend(1).set(column, 8);
             break;
 
-         case TempMode.USER1:
+         case Launchpad.TEMPMODE.USER1:
             userControls.getControl(row).set(column, 8);
             break;
 
-         case TempMode.USER2:
+         case Launchpad.TEMPMODE.USER2:
             userControls.getControl(row + 8).set(column, 8);
             break;
 
-         case TempMode.USER3:
+         case Launchpad.TEMPMODE.USER3:
             userControls.getControl(row + 16).set(column, 8);
             break;
       }
    }
 };
 
-gridPage.updateGrid = function()
+Launchpad.GridPage.prototype.updateGrid = function()
 {
    for(var t=0; t<8; t++)
    {
       this.updateTrackValue(t);
-      this.updateVuMeter(t);
    }
 };
 
-function vuLevelColor(level)
+Launchpad.GridPage.vuLevelColor = function(level)
 {
    switch (level)
    {
@@ -263,191 +258,100 @@ function vuLevelColor(level)
    return Colour.OFF;
 }
 
-gridPage.updateVuMeter = function(track)
+Launchpad.GridPage.prototype.updateTrackValue = function(track)
 {
-   var val = vuMeter[track];
-   var colour = Colour.OFF;
+    if (this.temp_mode == Launchpad.TEMPMODE.TRACK)
+    {
+	for(var scene=5; scene<8; scene++)
+	{
+            this.controller.setCellLED(scene, track, Launchpad.Colour.OFF);
+	}
 
-   if (this.mixerAlignedGrid)
-   {
-      var i = 7 - track;
-      colour = masterVuMeter > i ? vuLevelColor(Math.max(1, i)) : Colour.OFF;
-   }
-   else
-   {
-      colour = vuLevelColor(val);
-   }
+	if (this.controller.trackExists[track])
+	{
+            this.controller.setCellLED(TrackModeColumn.SELECT, track, this.controller.isSelected[track] ?  Launchpad.Colour.AMBER_FLASHING : Launchpad.Colour.AMBER_LOW);
+            this.controller.setCellLED(TrackModeColumn.MUTE, track, this.controller.mute[track] ? Launchpad.Colour.GREEN_LOW : Launchpad.Colour.GREEN_FULL);
+            this.controller.setCellLED(TrackModeColumn.SOLO, track, this.controller.solo[track] ? Launchpad.Colour.YELLOW_FULL : Launchpad.Colour.YELLOW_LOW);
+            this.controller.setCellLED(TrackModeColumn.ARM, track, this.controller.arm[track] ? Launchpad.Colour.RED_FULL : Launchpad.Colour.RED_LOW);
+            this.controller.setCellLED(TrackModeColumn.STOP, track, Launchpad.Colour.OFF);
+            this.controller.setCellLED(TrackModeColumn.RETURN_TO_ARRANGEMENT, track, Launchpad.Colour.OFF);
+	}
+	else
+	{
+            for(var scene=0; scene<5; scene++)
+            {
+		this.controller.setCellLED(scene, track, Launchpad.Colour.OFF);
+            }
+	}
+    }
+    else if (this.temp_mode == Launchpad.TEMPMODE.VOLUME)
+    {
+	for(var scene=0; scene<8; scene++)
+	{
+            var c = (this.controller.volume[track] == scene)
+		? Launchpad.Colour.GREEN_FULL
+		: ((this.controller.vuMeter[track] > scene))
+		? Launchpad.Colour.GREEN_LOW
+		: Launchpad.Colour.OFF;
 
-   switch(TEMPMODE)
-   {
-      case TempMode.VOLUME:
-         if (track === 0) colour = Colour.GREEN_FULL;
-         break;
+            this.controller.setCellLED(scene, track, c);
+	}
+    }
+    else
+    {
+	var value = 0;
+	var oncolor = Launchpad.Colour.GREEN_FULL;
+	var offcolor = Launchpad.Colour.OFF;
 
-      case TempMode.PAN:
-         if (track === 1) colour = Colour.AMBER_FULL;
-         break;
+	switch (this.temp_mode)
+	{
+        case Launchpad.TEMPMODE.PAN:
+            value = this.controller.pan[track];
+            oncolor = Launchpad.Colour.AMBER_FULL;
+            break;
 
-      case TempMode.SEND_A:
-         if (track === 2) colour = Colour.GREEN_FULL;
-         break;
+        case Launchpad.TEMPMODE.SEND_A:
+            value = this.controller.sendA[track];
+            break;
 
-      case TempMode.SEND_B:
-         if (track === 3) colour = Colour.GREEN_FULL;
-         break;
+        case Launchpad.TEMPMODE.SEND_B:
+            value = this.controller.sendB[track];
+            break;
 
-      case TempMode.USER1:
-         if (track === 4) colour = Colour.AMBER_FULL;
-         break;
+        case Launchpad.TEMPMODE.USER1:
+            value = this.controller.userValue[track];
+            break;
 
-      case TempMode.USER2:
-         if (track === 5) colour = Colour.GREEN_FULL;
-         break;
+        case Launchpad.TEMPMODE.USER2:
+            value = this.controller.userValue[track + 8];
+            break;
+        case Launchpad.TEMPMODE.USER3:
+            value = this.controller.userValue[track + 16];
+            break;
+	}
 
-      case TempMode.USER3:
-         if (track === 6) colour = Colour.GREEN_FULL;
-         break;
+	var drawVal = (value > 0) ? (value + 1) : 0;
 
-      case TempMode.TRACK:
-         if (track === 7) colour = Colour.YELLOW_FULL;
-         break;
-   }
-
-   setRightLED(track, colour);
+	for(var scene=0; scene<8; scene++)
+	{
+            this.controller.setCellLED(scene, track, (scene < drawVal) ? oncolor : offcolor);
+	}
+    }
 };
 
-gridPage.updateTrackValue = function(track)
+Launchpad.GridPage.prototype.setTempMode = function(mode)
 {
-   if (activePage != gridPage) return;
+   if (mode == this.temp_mode) return;
 
-   if (TEMPMODE == TempMode.OFF || TEMPMODE == TempMode.SCENE)
-   {
-      for(var scene=0; scene<8; scene++)
-      {
-         var i = track + scene*8;
-
-         var col = arm[track] ? Colour.RED_LOW : Colour.OFF;
-
-         var fullval = mute[track] ? 1 : 3;
-
-         if (hasContent[i] > 0)
-         {
-            if (isQueued[i] > 0)
-            {
-               col = mixColour(0, fullval, true);
-            }
-            else if (isRecording[i] > 0)
-            {
-               col = Colour.RED_FULL;
-            }
-            else if (isPlaying[i] > 0)
-            {
-               col = mixColour(0, fullval, false);
-            }
-            else
-            {
-               col = mixColour(fullval, fullval, false);
-            }
-         }
-
-         setCellLED(this.mixerAlignedGrid ? track : scene, this.mixerAlignedGrid ? scene : track, col);
-      }
-   }
-   else if (TEMPMODE == TempMode.TRACK)
-   {
-      for(var scene=5; scene<8; scene++)
-      {
-         setCellLED(scene, track, Colour.OFF);
-      }
-
-      if (trackExists[track])
-      {
-         setCellLED(TrackModeColumn.SELECT, track, isSelected[track] ?  Colour.AMBER_FLASHING : Colour.AMBER_LOW);
-         setCellLED(TrackModeColumn.MUTE, track, mute[track] ? Colour.GREEN_LOW : Colour.GREEN_FULL);
-         setCellLED(TrackModeColumn.SOLO, track, solo[track] ? Colour.YELLOW_FULL : Colour.YELLOW_LOW);
-         setCellLED(TrackModeColumn.ARM, track, arm[track] ? Colour.RED_FULL : Colour.RED_LOW);
-         setCellLED(TrackModeColumn.STOP, track, Colour.OFF);
-         setCellLED(TrackModeColumn.RETURN_TO_ARRANGEMENT, track, Colour.OFF);
-      }
-      else
-      {
-         for(var scene=0; scene<5; scene++)
-         {
-            setCellLED(scene, track, Colour.OFF);
-         }
-      }
-   }
-   else if (TEMPMODE == TempMode.VOLUME)
-   {
-      for(var scene=0; scene<8; scene++)
-      {
-         var c = (volume[track] == scene)
-            ? Colour.GREEN_FULL
-            : ((vuMeter[track] > scene))
-               ? Colour.GREEN_LOW
-               : Colour.OFF;
-
-         setCellLED(scene, track, c);
-      }
-   }
-   else
-   {
-      var value = 0;
-      var oncolor = Colour.GREEN_FULL;
-      var offcolor = Colour.OFF;
-
-      switch (TEMPMODE)
-      {
-         case TempMode.PAN:
-            value = pan[track];
-            oncolor = Colour.AMBER_FULL;
-            break;
-
-         case TempMode.SEND_A:
-            value = sendA[track];
-            break;
-
-         case TempMode.SEND_B:
-            value = sendB[track];
-            break;
-
-         case TempMode.USER1:
-            value = userValue[track];
-            break;
-
-         case TempMode.USER2:
-            value = userValue[track + 8];
-            break;
-         case TempMode.USER3:
-            value = userValue[track + 16];
-            break;
-      }
-
-      var drawVal = (value > 0) ? (value + 1) : 0;
-
-      for(var scene=0; scene<8; scene++)
-      {
-         setCellLED(scene, track, (scene < drawVal) ? oncolor : offcolor);
-      }
-   }
-};
-
-gridPage.setTempMode = function(mode)
-{
-   if (mode == TEMPMODE) return;
-
-   TEMPMODE = mode;
+   this.temp_mode = mode;
 
    // Update indications in the app
    for(var p=0; p<8; p++)
    {
       var track = trackBank.getTrack(p);
-      track.getVolume().setIndication(mode == TempMode.VOLUME);
-      track.getPan().setIndication(mode == TempMode.PAN);
-      track.getSend(0).setIndication(mode == TempMode.SEND_A);
-      track.getSend(1).setIndication(mode == TempMode.SEND_B);
-
-      userControls.getControl(p).setIndication(mode == TempMode.USER1);
-      userControls.getControl(p + 8).setIndication(mode == TempMode.USER2);
+      track.getVolume().setIndication(mode == Launchpad.TEMPMODE.VOLUME);
+      track.getPan().setIndication(mode == Launchpad.TEMPMODE.PAN);
+      track.getSend(0).setIndication(mode == Launchpad.TEMPMODE.SEND_A);
+      track.getSend(1).setIndication(mode == Launchpad.TEMPMODE.SEND_B);
    }
 };
