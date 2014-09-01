@@ -1,25 +1,36 @@
+/**
+ * Copyright 2014 Alan Drees
+ *   
+ * Purpose:
+ *   
+ * Requires:
+ *
+ */
 
-function Page()
+var Launchpad = Launchpad || {};
+
+Launchpad.Page = function(controller)
 {
-   this.canScrollLeft = false;
-   this.canScrollRight = false;
-   this.canScrollUp = false;
-   this.canScrollDown = false;
+    this.canScrollLeft = false;
+    this.canScrollRight = false;
+    this.canScrollUp = false;
+    this.canScrollDown = false;
+    this.controller = controller;
 }
 
-Page.prototype.updateOutputState = function()
+Launchpad.Page.prototype.updateOutputState = function()
 {
 };
 
-Page.prototype.updateScrollButtons = function()
+Launchpad.Page.prototype.updateScrollButtons = function()
 {
-   setTopLED(0, this.canScrollUp ? Colour.GREEN_FULL : Colour.GREEN_LOW);
-   setTopLED(1, this.canScrollDown ? Colour.GREEN_FULL : Colour.GREEN_LOW);
-   setTopLED(2, this.canScrollLeft ? Colour.GREEN_FULL : Colour.GREEN_LOW);
-   setTopLED(3, this.canScrollRight ? Colour.GREEN_FULL : Colour.GREEN_LOW);
+    this.controller.setTopLED(0, this.canScrollUp ?    Launchpad.Colour.GREEN_FULL : Launchpad.Colour.GREEN_LOW);
+    this.controller.setTopLED(1, this.canScrollDown ?  Launchpad.Colour.GREEN_FULL : Launchpad.Colour.GREEN_LOW);
+    this.controller.setTopLED(2, this.canScrollLeft ?  Launchpad.Colour.GREEN_FULL : Launchpad.Colour.GREEN_LOW);
+    this.controller.setTopLED(3, this.canScrollRight ? Launchpad.Colour.GREEN_FULL : Launchpad.Colour.GREEN_LOW);
 };
 
-Page.prototype.shouldKeyBeUsedForNoteInport = function(x,y)
+Launchpad.Page.prototype.shouldKeyBeUsedForNoteInport = function(x,y)
 {
    return false;
 }
