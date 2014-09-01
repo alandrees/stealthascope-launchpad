@@ -1,7 +1,7 @@
 
 loadAPI(1);
 
-host.defineController("loridcon", "Launchpad-stripdown", "0.0", "91EC79C0-402F-45D1-B89D-863984C2419D");
+host.defineController("Stealthascope", "Launchpad", "0.1", "91EC79C0-402F-45D1-B89D-863984C2419D");
 host.defineMidiPorts(1, 1);
 host.addDeviceNameBasedDiscoveryPair(["Launchpad"], ["Launchpad"]);
 host.addDeviceNameBasedDiscoveryPair(["Launchpad S"], ["Launchpad S"]);
