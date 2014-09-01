@@ -1,5 +1,30 @@
+/**
+ * Copyright 2014 Alan Drees
+ *   
+ * Purpose:
+ *   
+ * Requires:
+/**********************/
+/*script-wide globals */
+/**********************/
 
-var TopButton =
+/************/
+/* requires */
+/************/
+
+/***********/
+/* objects */
+/***********/
+
+/*************/
+/* functions */
+/*************/
+
+/***************/
+/* entry point */
+/***************/
+
+Launchpad.TopButton =
 {
    CURSOR_UP:104,
    CURSOR_DOWN:105,
@@ -11,7 +36,7 @@ var TopButton =
    MIXER:111
 };
 
-var MixerButton =
+Launchpad.MixerButton =
 {
    VOLUME:0,
    PAN:1,
@@ -23,12 +48,12 @@ var MixerButton =
    ARM:7
 };
 
-function mixColour(red, green, blink)
+Launchpad.mixColour = function(red, green, blink)
 {
    return (blink ? 8 : 12) | red | (green * 16);
-}
+};
 
-var Colour = // Novation are from the UK
+Launchpad.Colour = // Novation are from the UK
 {
    OFF:12,
    RED_LOW:13,
@@ -39,7 +64,7 @@ var Colour = // Novation are from the UK
    YELLOW_LOW: 0x2D,
    ORANGE:39,
    LIME:0x3D,
-   HEADER:mixColour(0,1,false),
+   HEADER:Launchpad.mixColour(0,1,false),
    GREEN_LOW:28,
    GREEN_FULL:60,
    RED_FLASHING:11,
@@ -48,7 +73,7 @@ var Colour = // Novation are from the UK
    GREEN_FLASHING:56
 };
 
-var LED =
+Launchpad.LED =
 {
    GRID:0,
    SCENE:64,
@@ -73,6 +98,30 @@ var LED =
    ARM:7
 };
 
-var NUM_TRACKS = 8;
-var NUM_SENDS = 2;
-var NUM_SCENES = 8;
+Launchpad.TEMPMODE =
+{
+    OFF:-1,
+    VOLUME:0,
+    PAN:1,
+    SEND_A:2,
+    SEND_B:3,
+    TRACK:4,
+    SCENE:5,
+    USER1:6,
+    USER2:7,
+    USER3:8
+};
+
+Launchpad.TRACKMODECOLUMN =
+{
+    STOP:0,
+    SELECT:1,
+    MUTE:2,
+    SOLO:3,
+    ARM:4,
+    RETURN_TO_ARRANGEMENT:7
+};
+
+Launchpad.NUM_TRACKS = 8;
+Launchpad.NUM_SENDS = 2;
+Launchpad.NUM_SCENES = 8;
