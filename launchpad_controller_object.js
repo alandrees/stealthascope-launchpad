@@ -16,27 +16,19 @@ var Launchpad = Launchpad || {};
  * LaunchpadController consutructor.
  * 
  * @param options options object to set the options of the controller for
+ * @param instance controller instance
  *
  * @returns None
  */
 
-Launchpad.LaunchpadController = function(options)
+Launchpad.LaunchpadController = function(options, instance)
 {
-    if(typeof options === 'object')
-    {
-	//this.set_options(options);
-    }
-
-    this.options = {};
-
-    this.options.tracks = 8;
-    this.options.sends  = 8;
-    this.options.scenes = 8;
+    this.set_options(options);
+    this.options.instance = instance;
 
     this.arm = initArray(0, 8);
-    this.isSelected = initArray(0, 8);
     this.trackExists = initArray(0, 8);
-    
+    this.isSelected = initArray(0, 8);
     this.gridPage = new Launchpad.GridPage(this);
 
     this.hasContent = initArray(0, 64);
@@ -47,9 +39,9 @@ Launchpad.LaunchpadController = function(options)
     this.activePage = {};
 
     this.logoPhase = 0;
-    this.showStealthascopeLogo = true;
+    this.showStealthascopeLogo = false;
 
-    this.noteOn = initArray(false, 128);
+    this.noteOn = initArray(0, 128);
 
     /** Cache for LEDs needing to be updated, which is used so we can determine if we want to send the LEDs using the
      *  optimized approach or not, and to send only the LEDs that has changed.
@@ -57,10 +49,9 @@ Launchpad.LaunchpadController = function(options)
 
     this.pendingLEDs = new Array(80);
     this.activeLEDs = new Array(80);
-
-    console.log("Launchpad object created");
+    
+    this.force_optimized_flush = false;
 }
-
 
 /**\fn Launchpad.LaunchpadController.prototype.init
  * 
@@ -75,60 +66,66 @@ Launchpad.LaunchpadController.prototype.init = function()
 {
     var self = this;
 
-    host.getMidiInPort(0).setMidiCallback(function(status, data1, data2){self.onMidi(status, data1, data2);});
+    host.getMidiInPort(this.options.instance - 1).setMidiCallback(function(status, data1, data2){self.onMidi(status, data1, data2);});
 
-    noteInput = host.getMidiInPort(0).createNoteInput("Launchpad", "80????", "90????");
-    noteInput.setShouldConsumeEvents(false);
+    this.noteInput = host.getMidiInPort(this.options.instance - 1).createNoteInput("Launchpad", "80????", "90????");
+    this.noteInput.setShouldConsumeEvents(false);
 
-    transport = host.createTransportSection();
+    this.transport = host.createTransportSection();
 
-    trackBank = host.createMainTrackBankSection(this.options.tracks, this.options.sends, this.options.scenes);
+    this.trackBank = host.createMainTrackBankSection(this.options.tracks, 0, this.options.scenes);
 
-    for(var t = 0; t < Launchpad.NUM_TRACKS; t++)
+    for(var t = 0; t < this.options.tracks; t++)
     {
-	var track = trackBank.getTrack(t);
+	var track = this.trackBank.getTrack(t);
+
+	track.getArm().addValueObserver(this.getTrackObserverFunc(t, this.arm));
+	track.exists().addValueObserver(this.getTrackObserverFunc(t, this.trackExists));
+	track.addIsSelectedObserver(this.getTrackObserverFunc(t, this.isSelected));
 
 	var clipLauncher = track.getClipLauncher();
 
-	clipLauncher.addHasContentObserver(this.getGridObserverFunc(t, self.hasContent));
-	clipLauncher.addIsPlayingObserver(this.getGridObserverFunc(t, self.isPlaying));
-	clipLauncher.addIsRecordingObserver(this.getGridObserverFunc(t, self.isRecording));
-	clipLauncher.addIsQueuedObserver(this.getGridObserverFunc(t, self.isQueued));
-
-	track.addIsSelectedObserver(this.getTrackObserverFunc(t, self.isSelected));
+	clipLauncher.addHasContentObserver(this.getGridObserverFunc(t, this.hasContent));
+	clipLauncher.addIsPlayingObserver(this.getGridObserverFunc(t, this.isPlaying));
+	clipLauncher.addIsRecordingObserver(this.getGridObserverFunc(t, this.isRecording));
+	clipLauncher.addIsQueuedObserver(this.getGridObserverFunc(t, this.isQueued));
     }
 
-    trackBank.addCanScrollTracksUpObserver(function(canScroll)
+    this.trackBank.addCanScrollTracksUpObserver(function(canScroll)
 					   {
 					       self.gridPage.canScrollTracksUp = canScroll;
 					   });
     
 
-    trackBank.addCanScrollTracksDownObserver(function(canScroll)
+    this.trackBank.addCanScrollTracksDownObserver(function(canScroll)
 					     {
 						 self.gridPage.canScrollTracksDown = canScroll;
 					     });
 
-    trackBank.addCanScrollScenesUpObserver(function(canScroll)
+    this.trackBank.addCanScrollScenesUpObserver(function(canScroll)
 					   {
 					       self.gridPage.canScrollScenesUp = canScroll;
 					   });
 
-    trackBank.addCanScrollScenesDownObserver(function(canScroll)
+    this.trackBank.addCanScrollScenesDownObserver(function(canScroll)
 					     {
 						 self.gridPage.canScrollScenesDown = canScroll;
 					     });
 
-    cursorTrack = host.createCursorTrackSection(0, 0);
+    this.cursorTrack = host.createCursorTrackSection(0, 0);
+
+    this.application = host.createApplication();
 
     this.resetDevice();
     this.setGridMappingMode();
     this.enableAutoFlashing();
-    this.animateLogo();
+
+    if(this.showStealthascopeLogo)
+    {
+	this.animateLogo();
+    }
+
     this.setActivePage(this.gridPage);
-
-    this.updateNoteTranlationTable();
-
 }
 
 
@@ -153,7 +150,7 @@ Launchpad.LaunchpadController.prototype.setActivePage = function(page)
 	// Update indications in the app
 	for(var p=0; p<8; p++)
 	{
-            var track = trackBank.getTrack(p);
+            var track = this.trackBank.getTrack(p);
             track.getClipLauncher().setIndication(this.activePage == this.gridPage);
 	}
     }
@@ -230,7 +227,7 @@ Launchpad.LaunchpadController.prototype.animateLogo = function()
 
     this.logoPhase += 0.2;
 
-    host.scheduleTask(function(){self.animateLogo()}, null, 30);
+    host.scheduleTask(function(){self.animateLogo()}, null, 90);
 }
 
 
@@ -260,12 +257,9 @@ Launchpad.LaunchpadController.prototype.exit = function()
 
 Launchpad.LaunchpadController.prototype.resetDevice = function()
 {
-    sendMidi(0xB0, 0, 0);
+    sendMidi(0xB0, 0, 0, this.options.instance - 1);
 
-    for(var i=0; i<80; i++)
-    {
-	this.pendingLEDs[i] = 0;
-    }
+    this.clear();
 
     this.flushLEDs();
 }
@@ -282,13 +276,13 @@ Launchpad.LaunchpadController.prototype.resetDevice = function()
 
 Launchpad.LaunchpadController.prototype.enableAutoFlashing = function()
 {
-    sendMidi(0xB0, 0, 0x28);
+    sendMidi(0xB0, 0, 0x28, this.options.instance - 1);
 }
 
 
 /**\fn Launchpad.LaunchpadController.prototype.setGridMappingMode
  * 
- *
+ * This sets the grid mapping mode between the drum pad mode or the grid mode (in this case the grid mode
  *
  * @param None
  *
@@ -297,16 +291,31 @@ Launchpad.LaunchpadController.prototype.enableAutoFlashing = function()
 
 Launchpad.LaunchpadController.prototype.setGridMappingMode = function()
 {
-    sendMidi(0xB0, 0, 1);
+    sendMidi(0xB0, 0, 1, this.options.instance - 1);
+}
+
+
+/**\fn Launchpad.LaunchpadController.prototype.setGridMappingMode
+ * 
+ * This sets the grid mapping mode between the drum pad mode or the grid mode (in this case the grid mode
+ *
+ * @param None
+ *
+ * @returns None
+ */
+
+Launchpad.LaunchpadController.prototype.setDrumMappingMode = function()
+{
+    sendMidi(0xB0, 0, 1, this.options.instance - 1);
 }
 
 
 /**\fn Launchpad.LaunchpadController.prototype.setDutyCycle
  * 
+ * Sets the LED duty cycle by passing a numerator and denominator
  *
- *
- * @param numerator
- * @param denominator
+ * @param numerator duty cycle numerator
+ * @param denominator duty cycle denominator
  *
  * @returns None
  */
@@ -315,17 +324,18 @@ Launchpad.LaunchpadController.prototype.setDutyCycle = function(numerator, denom
 {
     if (numerator < 9)
     {
-	sendMidi(0xB0, 0x1E, 16 * (numerator - 1) + (denominator - 3));
+	sendMidi(0xB0, 0x1E, 16 * (numerator - 1) + (denominator - 3), this.options.instance - 1);
     }
     else
     {
-	sendMidi(0xB0, 0x1F, 16 * (numerator - 9) + (denominator - 3));
+	sendMidi(0xB0, 0x1F, 16 * (numerator - 9) + (denominator - 3), this.options.instance - 1);
     }
 }
 
 
 /**\fn Launchpad.LaunchpadController.prototype.updateNoteTranlationTable
  * 
+ *
  *
  * @param None
  *
@@ -348,7 +358,7 @@ Launchpad.LaunchpadController.prototype.updateNoteTranlationTable = function()
 	}
     }
 
-    noteInput.setKeyTranslationTable(table);
+    this.noteInput.setKeyTranslationTable(table);
 
 }
 
@@ -377,8 +387,13 @@ Launchpad.LaunchpadController.prototype.onMidi = function(status, data1, data2)
 	case Launchpad.TopButton.SESSION:
             if (isPressed)
             {
-		this.setActivePage(this.gridPage);
-		this.gridPage.setTempMode(Launchpad.TEMPMODE.SCENE);
+		if(this.activePage.name !== "grid"){
+		    this.setActivePage(this.gridPage);
+		}
+		else
+		{
+		    this.gridPage.setTempMode(Launchpad.TEMPMODE.TRACK);
+		}
             }
             else 
 	    {
@@ -388,15 +403,13 @@ Launchpad.LaunchpadController.prototype.onMidi = function(status, data1, data2)
             break;
 
         case Launchpad.TopButton.USER1:
-	    console.log("USER1");
             break;
 
         case Launchpad.TopButton.USER2:
-	    console.log("USER2");
             break;
 
         case Launchpad.TopButton.MIXER:
-	    console.log("MIXER");
+	    this.activePage.onMixerButton(isPressed);
             break;
 
         case Launchpad.TopButton.CURSOR_LEFT:
@@ -473,6 +486,7 @@ Launchpad.LaunchpadController.prototype.flush = function()
     }
 
     this.flushLEDs();
+
 }
 
 
@@ -487,10 +501,8 @@ Launchpad.LaunchpadController.prototype.flush = function()
 
 Launchpad.LaunchpadController.prototype.drawStealthascopeLogo = function()
 {
-    this.clear();
-
-    var left_offset = 2;
-    var right_limit = 7;
+    var left_offset = 1;
+    var right_limit = 6;
 
     var c = Launchpad.mixColour(7, 1, false);
 
@@ -511,7 +523,7 @@ Launchpad.LaunchpadController.prototype.drawStealthascopeLogo = function()
 
     //right
     for(var i = 5; i < 7; i++){
-	this.setCellLED(right_limit - left_offset,i,c);
+	this.setCellLED(right_limit - 2,i,c);
     }
 
     //bottom
@@ -538,10 +550,10 @@ Launchpad.LaunchpadController.prototype.setTopLED = function(index, colour)
 
 /**\fn Launchpad.LaunchpadController.prototype.setRightLED
  * 
+ * Sets the scene-firing LEDs on the far right
  *
- *
- * @param index
- * @param colour
+ * @param index index to send to
+ * @param colour colour to set the LED to
  *
  * @returns None
  */
@@ -565,9 +577,7 @@ Launchpad.LaunchpadController.prototype.setRightLED = function(index, colour)
 
 Launchpad.LaunchpadController.prototype.setCellLED = function(column, row, colour)
 {
-    var key = row * 8 + column;
-
-    this.pendingLEDs[key] = colour;
+    this.pendingLEDs[row * 8 + column] = colour;
 }
 
 
@@ -582,6 +592,19 @@ Launchpad.LaunchpadController.prototype.setCellLED = function(column, row, colou
 
 Launchpad.LaunchpadController.prototype.flushLEDs = function()
 {
+    if(typeof this.flushcount === 'undefined')
+    {
+	for(var x in this.pendingLEDs)
+	{
+	    if(typeof this.pendingLEDs[x] === 'object')
+	    {
+		dump(this.pendingLEDs[x]);
+	    }
+	}
+	this.flushcount = true;
+    }
+    
+
     var changedCount = 0;
 
     for(var i=0; i<80; i++)
@@ -596,48 +619,59 @@ Launchpad.LaunchpadController.prototype.flushLEDs = function()
     {
 	return;
     }
-    
+
     if (changedCount > 30)
     {
-	// send using channel 3 optimized mode
 	for(var i = 0; i<80; i+=2)
 	{
-	    sendMidi(0x92, this.pendingLEDs[i], this.pendingLEDs[i+1]);
-	    this.activeLEDs[i] = this.pendingLEDs[i];
-	    this.activeLEDs[i+1] = this.pendingLEDs[i+1];
+            sendMidi(0x92, 
+		     this.pendingLEDs[i], 
+		     this.pendingLEDs[i+1],
+		     this.options.instance - 1);
+            this.activeLEDs[i] = this.pendingLEDs[i];
+            this.activeLEDs[i+1] = this.pendingLEDs[i+1];
 	}
-	
-	sendMidi(0xB0, 104 + 7, this.activeLEDs[79]); // send dummy message to leave optimized mode
+
+	sendMidi(0xB0, 104 + 7, this.activeLEDs[79], this.options.instance - 1); // send dummy message to leave optimized mode
     }
     else
     {
 	for(var i = 0; i<80; i++)
 	{
-	    if (this.pendingLEDs[i] != this.activeLEDs[i])
-	    {
+            if (this.pendingLEDs[i] != this.activeLEDs[i])
+            {
 		this.activeLEDs[i] = this.pendingLEDs[i];
 
 		var colour = this.activeLEDs[i];
 
-		if (i < 64) // Main Grid
+		if (i < 64) // Main Grid                                                                                                                                                                            
 		{
 		    var column = i & 0x7;
 		    var row = i >> 3;
-		    sendMidi(0x90, row*16 + column, colour);
+	
+		    sendMidi(0x90, 
+			     row*16 + column, 
+			     colour,
+			     this.options.instance - 1);
 		}
-		else if (i < 72)    // Right buttons
+		else if (i < 72)    // Right buttons                                                                                                                                                                
 		{
-		    sendMidi(0x90, 8 + (i - 64) * 16, colour);
+		    sendMidi(0x90, 
+			     8 + (i - 64) * 16, 
+			     colour,
+			     this.options.instance - 1);
 		}
-		else    // Top buttons
+		else    // Top buttons                                                                                                                                                                              
 		{
-		    sendMidi(0xB0, 104 + (i - 72), colour);
+		    sendMidi(0xB0, 
+			     104 + (i - 72), 
+			     colour,
+		       	     this.options.instance - 1);
 		}
-	    }
+            }
 	}
     }
 }
-
 
 /**\fn Launchpad.LaunchpadController.prototype.textToPattern
  * 
@@ -682,3 +716,28 @@ Launchpad.LaunchpadController.prototype.textToPattern = function(text)
 
     return result;
 }
+
+/**\fn Launchpad.LaunchpadController.prototype.set_options
+ *
+ * Sets controller options
+ *
+ * @param options options with which to set (use defaults if not set)
+ *
+ * @returns None
+ */
+
+Launchpad.LaunchpadController.prototype.set_options = function(options)
+{
+    this.options = { 'tracks'   : Launchpad.NUM_TRACKS,
+		     'scenes'   : Launchpad.NUM_SCENES,
+		     'instance' : 1 };
+
+    if(typeof options === 'object')
+    {
+	for(var option in options)
+	{
+	    this.options[option] = options[option];
+	}
+    }
+}
+	
