@@ -302,7 +302,7 @@ Launchpad.GridPage.prototype.updateTrackValue = function(track)
 	    
 	    var index = track + scene * 8;
 
-	    if(!armed && !selected)
+	    if(!armed)
 	    {
 		if(this.controller.hasContent[index]){
 		    if(this.controller.isPlaying[index]){
@@ -315,7 +315,7 @@ Launchpad.GridPage.prototype.updateTrackValue = function(track)
 		    }
 		}
 	    }
-	    else if(armed)
+	    else
 	    {
 		if(this.controller.isPlaying[index]){
 		    this.controller.setCellLED(column, 
