@@ -1,12 +1,24 @@
 
 loadAPI(1);
 
+var console = {};
+
+console.log = function(string)
+{
+    println(string);
+}
+
+load("launchpad_controller_object.js");
+load("launchpad_constants.js");
+load("launchpad_grid.js");
+load("launchpad_options.js");
+
 host.defineController("Stealthascope", "Launchpad", "0.1", "91EC79C0-402F-45D1-B89D-863984C2419D");
-host.defineMidiPorts(1, 1);
+host.defineMidiPorts(Launchpad.options.devices, Launchpad.options.devices);
 host.addDeviceNameBasedDiscoveryPair(["Launchpad"], ["Launchpad"]);
 host.addDeviceNameBasedDiscoveryPair(["Launchpad S"], ["Launchpad S"]);
 
-for(var i=1; i<20; i++)
+for(var i = 1; i < Launchpad.options.devices; i++)
 {
    var name = i.toString() + "- Launchpad";
    host.addDeviceNameBasedDiscoveryPair([name], [name]);
@@ -23,32 +35,35 @@ if(host.platformIsLinux())
 	}
 }
 
-var console = {};
+var controllers = [];
 
-console.log = function(string)
+for(var i = 0; i < Launchpad.options.devices; i++)
 {
-    println(string);
+    controllers[i] = new Launchpad.LaunchpadController(Launchpad.options, i + 1);
 }
-
-load("launchpad_controller_object.js");
-load("launchpad_constants.js");
-load("launchpad_grid.js");
-
-var lp = new Launchpad.LaunchpadController({});
 
 function init()
 {
-    lp.init();
+    for(var controller in controllers)
+    {
+	controllers[controller].init();
+    }
 }
 
 function exit()
 {
-    lp.exit();
+    for(var controller in controllers)
+    {
+	controllers[controller].exit();
+    }
 }
 
 function flush()
 {
-    lp.flush();
+    for(var controller in controllers)
+    {
+	controllers[controller].flush();
+    }
 }
 
 
