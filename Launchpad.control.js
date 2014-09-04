@@ -13,7 +13,7 @@ load("launchpad_constants.js");
 load("launchpad_grid.js");
 load("launchpad_options.js");
 
-host.defineController("Stealthascope", "Launchpad", "0.1", "91EC79C0-402F-45D1-B89D-863984C2419D");
+host.defineController("Stealthascope", "Launchpad", "0.2", "91EC79C0-402F-45D1-B89D-863984C2419D");
 host.defineMidiPorts(Launchpad.options.devices, Launchpad.options.devices);
 host.addDeviceNameBasedDiscoveryPair(["Launchpad"], ["Launchpad"]);
 host.addDeviceNameBasedDiscoveryPair(["Launchpad S"], ["Launchpad S"]);
@@ -29,13 +29,17 @@ for(var i = 1; i < Launchpad.options.devices; i++)
 
 if(host.platformIsLinux())
 {
-	for(var i=1; i<16; i++)
+	for(var i = 1; i < Launchpad.options.devices; i++)
 	{
 	   host.addDeviceNameBasedDiscoveryPair(["Launchpad S " + + i.toString() + " MIDI 1"], ["Launchpad S " + + i.toString() + " MIDI 1"]);
 	}
 }
 
-var controllers = [];
+var controllers = new Array();
+var icc_network = new Array();
+
+icc_network.push(ICC.create_new_icc_network['launchpad']);
+
 
 for(var i = 0; i < Launchpad.options.devices; i++)
 {
@@ -65,20 +69,3 @@ function flush()
 	controllers[controller].flush();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
