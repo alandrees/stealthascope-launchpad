@@ -2,28 +2,11 @@
  * Copyright 2014 Alan Drees
  *   
  * Purpose:
- *   
+ *   Define several launchpad controller constants.  Modified from the factory Bitwig script.
+ *
  * Requires:
-/**********************/
-/*script-wide globals */
-/**********************/
-
-/************/
-/* requires */
-/************/
-
-/***********/
-/* objects */
-/***********/
-
-/*************/
-/* functions */
-/*************/
-
-/***************/
-/* entry point */
-/***************/
-
+ * 
+ */
 Launchpad.TopButton =
 {
    CURSOR_UP:104,
@@ -101,15 +84,11 @@ Launchpad.LED =
 Launchpad.TEMPMODE =
 {
     OFF:-1,
-    VOLUME:0,
-    PAN:1,
-    SEND_A:2,
-    SEND_B:3,
-    TRACK:4,
-    SCENE:5,
-    USER1:6,
-    USER2:7,
-    USER3:8
+    TRACK:1,
+    USER1:2,
+    USER2:3,
+    MIXER:4
+    
 };
 
 Launchpad.TRACKMODECOLUMN =
