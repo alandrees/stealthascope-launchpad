@@ -24,7 +24,7 @@ var Launchpad = Launchpad || {};
 Launchpad.LaunchpadController = function(options, instance)
 {
     this.set_options(options);
-    this.options.instance = instance;
+    this.instance = instance;
 
     this.arm = initArray(0, 8);
     this.trackExists = initArray(0, 8);
@@ -74,9 +74,9 @@ Launchpad.LaunchpadController.prototype.init = function()
 {
     var self = this;
 
-    host.getMidiInPort(this.options.instance - 1).setMidiCallback(function(status, data1, data2){self.onMidi(status, data1, data2);});
+    host.getMidiInPort(this.instance).setMidiCallback(function(status, data1, data2){self.onMidi(status, data1, data2);});
 
-    this.noteInput = host.getMidiInPort(this.options.instance - 1).createNoteInput("Launchpad", "80????", "90????");
+    this.noteInput = host.getMidiInPort(this.instance).createNoteInput("Launchpad", "80????", "90????");
     this.noteInput.setShouldConsumeEvents(false);
 
     this.transport = host.createTransportSection();
@@ -265,7 +265,7 @@ Launchpad.LaunchpadController.prototype.exit = function()
 
 Launchpad.LaunchpadController.prototype.resetDevice = function()
 {
-    sendMidi(0xB0, 0, 0, this.options.instance - 1);
+    sendMidi(0xB0, 0, 0, this.instance);
 
     this.clear();
 
@@ -284,7 +284,7 @@ Launchpad.LaunchpadController.prototype.resetDevice = function()
 
 Launchpad.LaunchpadController.prototype.enableAutoFlashing = function()
 {
-    sendMidi(0xB0, 0, 0x28, this.options.instance - 1);
+    sendMidi(0xB0, 0, 0x28, this.instance);
 }
 
 
@@ -299,7 +299,7 @@ Launchpad.LaunchpadController.prototype.enableAutoFlashing = function()
 
 Launchpad.LaunchpadController.prototype.setGridMappingMode = function()
 {
-    sendMidi(0xB0, 0, 1, this.options.instance - 1);
+    sendMidi(0xB0, 0, 1, this.instance);
 }
 
 
@@ -314,7 +314,7 @@ Launchpad.LaunchpadController.prototype.setGridMappingMode = function()
 
 Launchpad.LaunchpadController.prototype.setDrumMappingMode = function()
 {
-    sendMidi(0xB0, 0, 1, this.options.instance - 1);
+    sendMidi(0xB0, 0, 1, this.instance);
 }
 
 
@@ -332,11 +332,11 @@ Launchpad.LaunchpadController.prototype.setDutyCycle = function(numerator, denom
 {
     if (numerator < 9)
     {
-	sendMidi(0xB0, 0x1E, 16 * (numerator - 1) + (denominator - 3), this.options.instance - 1);
+	sendMidi(0xB0, 0x1E, 16 * (numerator - 1) + (denominator - 3), this.instance);
     }
     else
     {
-	sendMidi(0xB0, 0x1F, 16 * (numerator - 9) + (denominator - 3), this.options.instance - 1);
+	sendMidi(0xB0, 0x1F, 16 * (numerator - 9) + (denominator - 3), this.instance);
     }
 }
 
@@ -635,12 +635,12 @@ Launchpad.LaunchpadController.prototype.flushLEDs = function()
             sendMidi(0x92, 
 		     this.pendingLEDs[i], 
 		     this.pendingLEDs[i+1],
-		     this.options.instance - 1);
+		     this.instance);
             this.activeLEDs[i] = this.pendingLEDs[i];
             this.activeLEDs[i+1] = this.pendingLEDs[i+1];
 	}
 
-	sendMidi(0xB0, 104 + 7, this.activeLEDs[79], this.options.instance - 1); // send dummy message to leave optimized mode
+	sendMidi(0xB0, 104 + 7, this.activeLEDs[79], this.instance); // send dummy message to leave optimized mode
     }
     else
     {
@@ -660,21 +660,21 @@ Launchpad.LaunchpadController.prototype.flushLEDs = function()
 		    sendMidi(0x90, 
 			     row*16 + column, 
 			     colour,
-			     this.options.instance - 1);
+			     this.instance);
 		}
 		else if (i < 72)    // Right buttons                                                                                                                                                                
 		{
 		    sendMidi(0x90, 
 			     8 + (i - 64) * 16, 
 			     colour,
-			     this.options.instance - 1);
+			     this.instance);
 		}
 		else    // Top buttons                                                                                                                                                                              
 		{
 		    sendMidi(0xB0, 
 			     104 + (i - 72), 
 			     colour,
-		       	     this.options.instance - 1);
+		       	     this.instance);
 		}
             }
 	}
@@ -694,7 +694,7 @@ Launchpad.LaunchpadController.prototype.textToPattern = function(text)
 {
     var result = [];
 
-    for(var i=0; i<text.length; i++)
+    for(var i=0; i< text.length; i++)
     {
 	if (i != 0) result.push(0x0); // mandatory spacing
 
