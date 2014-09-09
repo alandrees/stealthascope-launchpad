@@ -65,12 +65,12 @@ Launchpad.LaunchpadController = function(options, instance)
  * 
  * Initalization function
  *
- * @param None
+ * @param banks banks object generated externally
  *
  * @returns None
  */
 
-Launchpad.LaunchpadController.prototype.init = function()
+Launchpad.LaunchpadController.prototype.init = function(banks)
 {
     var self = this;
 
@@ -78,52 +78,57 @@ Launchpad.LaunchpadController.prototype.init = function()
 
     this.noteInput = host.getMidiInPort(this.instance).createNoteInput("Launchpad", "80????", "90????");
     this.noteInput.setShouldConsumeEvents(false);
+    this.banks = {};
 
-    this.transport = host.createTransportSection();
-
-    this.trackBank = host.createMainTrackBankSection(this.options.tracks, 0, this.options.scenes);
+    if(typeof banks === 'undefined')
+    {
+	this.banks.transport = host.createTransportSection();
+	this.banks.application = host.createApplication();
+	this.banks.trackbank = host.createMainTrackBankSection(this.options.tracks, 
+							       0, 
+							       this.options.scenes);
+    }
+    else
+    {
+	this.banks = banks;
+    }
 
     for(var t = 0; t < this.options.tracks; t++)
     {
-	var track = this.trackBank.getTrack(t);
+	var track = this.banks.trackbank.getTrack(t);
 
 	track.getArm().addValueObserver(this.getTrackObserverFunc(t, this.arm));
 	track.exists().addValueObserver(this.getTrackObserverFunc(t, this.trackExists));
 	track.addIsSelectedObserver(this.getTrackObserverFunc(t, this.isSelected));
 
-	var clipLauncher = track.getClipLauncher();
+	var cliplauncher = track.getClipLauncher();
 
-	clipLauncher.addHasContentObserver(this.getGridObserverFunc(t, this.hasContent));
-	clipLauncher.addIsPlayingObserver(this.getGridObserverFunc(t, this.isPlaying));
-	clipLauncher.addIsRecordingObserver(this.getGridObserverFunc(t, this.isRecording));
-	clipLauncher.addIsQueuedObserver(this.getGridObserverFunc(t, this.isQueued));
+	cliplauncher.addHasContentObserver(this.getGridObserverFunc(t, this.hasContent));
+	cliplauncher.addIsPlayingObserver(this.getGridObserverFunc(t, this.isPlaying));
+	cliplauncher.addIsRecordingObserver(this.getGridObserverFunc(t, this.isRecording));
+	cliplauncher.addIsQueuedObserver(this.getGridObserverFunc(t, this.isQueued));
     }
 
-    this.trackBank.addCanScrollTracksUpObserver(function(canScroll)
-					   {
-					       self.gridPage.canScrollTracksUp = canScroll;
-					   });
+    this.banks.trackbank.addCanScrollTracksUpObserver(function(canScroll)
+						      {
+							  self.gridPage.canScrollTracksUp = canScroll;
+						      });
     
 
-    this.trackBank.addCanScrollTracksDownObserver(function(canScroll)
-					     {
-						 self.gridPage.canScrollTracksDown = canScroll;
-					     });
+    this.banks.trackbank.addCanScrollTracksDownObserver(function(canScroll)
+							{
+							    self.gridPage.canScrollTracksDown = canScroll;
+							});
 
-    this.trackBank.addCanScrollScenesUpObserver(function(canScroll)
-					   {
-					       self.gridPage.canScrollScenesUp = canScroll;
-					   });
+    this.banks.trackbank.addCanScrollScenesUpObserver(function(canScroll)
+						      {
+							  self.gridPage.canScrollScenesUp = canScroll;
+						      });
 
-    this.trackBank.addCanScrollScenesDownObserver(function(canScroll)
-					     {
-						 self.gridPage.canScrollScenesDown = canScroll;
-					     });
-
-    this.cursorTrack = host.createCursorTrackSection(0, 0);
-
-    this.application = host.createApplication();
-
+    this.banks.trackbank.addCanScrollScenesDownObserver(function(canScroll)
+							{
+							    self.gridPage.canScrollScenesDown = canScroll;
+							});
     this.resetDevice();
     this.setGridMappingMode();
     this.enableAutoFlashing();
@@ -156,9 +161,9 @@ Launchpad.LaunchpadController.prototype.setActivePage = function(page)
 	this.updateNoteTranlationTable();
 
 	// Update indications in the app
-	for(var p=0; p<8; p++)
+	for(var p = 0; p < 8; p++)
 	{
-            var track = this.trackBank.getTrack(p);
+            var track = this.banks.trackbank.getTrack(p);
             track.getClipLauncher().setIndication(this.activePage == this.gridPage);
 	}
     }
@@ -167,7 +172,7 @@ Launchpad.LaunchpadController.prototype.setActivePage = function(page)
 
 /**\fn Launchpad.LaunchpadController.prototype.getTrackObserverFunc
  * 
- * 
+ *
  *
  * @param track
  * @param varToStore
