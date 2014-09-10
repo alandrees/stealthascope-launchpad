@@ -17,6 +17,7 @@ var Launchpad = Launchpad || {};
  * 
  * @param options options object to set the options of the controller for
  * @param instance controller instance
+ * @param midi_instance midi io instance to use
  *
  * @returns None
  */
@@ -40,13 +41,14 @@ Launchpad.LaunchpadController = function(options, instance, midi_instance)
     this.isQueued = initArray(0, 64);
 
     //these coordinates correspond to the top left corner of the highlighting section
-
+/*
     this.coordinates = {'width'  : new ICC.ICC_Value('launchpad',
 						     0,
 						     this),
 			'height' : new ICC.ICC_Value('launchpad',
 						     0,
 						     this)};
+*/
     this.activePage = {};
 
     this.logoPhase = 0;
