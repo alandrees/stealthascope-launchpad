@@ -21,10 +21,13 @@ var Launchpad = Launchpad || {};
  * @returns None
  */
 
-Launchpad.LaunchpadController = function(options, instance)
+Launchpad.LaunchpadController = function(options, instance, midi_instance)
 {
+    if(typeof midi_instance === 'undefined') var midi_instance = instance;
+
     this.set_options(options);
     this.instance = instance;
+    this.midi_instance = midi_instance;
 
     this.arm = initArray(0, 8);
     this.trackExists = initArray(0, 8);
@@ -74,9 +77,9 @@ Launchpad.LaunchpadController.prototype.init = function(banks)
 {
     var self = this;
 
-    host.getMidiInPort(this.instance).setMidiCallback(function(status, data1, data2){self.onMidi(status, data1, data2);});
+    host.getMidiInPort(this.midi_instance).setMidiCallback(function(status, data1, data2){self.onMidi(status, data1, data2);});
 
-    this.noteInput = host.getMidiInPort(this.instance).createNoteInput("Launchpad", "80????", "90????");
+    this.noteInput = host.getMidiInPort(this.midi_instance).createNoteInput("Launchpad", "80????", "90????");
     this.noteInput.setShouldConsumeEvents(false);
     this.banks = {};
 
@@ -270,7 +273,9 @@ Launchpad.LaunchpadController.prototype.exit = function()
 
 Launchpad.LaunchpadController.prototype.resetDevice = function()
 {
-    sendMidi(0xB0, 0, 0, this.instance);
+    this.send_midi(0xB0, 
+		   0, 
+		   0);
 
     this.clear();
 
@@ -289,7 +294,9 @@ Launchpad.LaunchpadController.prototype.resetDevice = function()
 
 Launchpad.LaunchpadController.prototype.enableAutoFlashing = function()
 {
-    sendMidi(0xB0, 0, 0x28, this.instance);
+    this.send_midi(0xB0, 
+		   0, 
+		   0x28);
 }
 
 
@@ -304,7 +311,9 @@ Launchpad.LaunchpadController.prototype.enableAutoFlashing = function()
 
 Launchpad.LaunchpadController.prototype.setGridMappingMode = function()
 {
-    sendMidi(0xB0, 0, 1, this.instance);
+    this.send_midi(0xB0, 
+		   0, 
+		   1);		   
 }
 
 
@@ -319,7 +328,9 @@ Launchpad.LaunchpadController.prototype.setGridMappingMode = function()
 
 Launchpad.LaunchpadController.prototype.setDrumMappingMode = function()
 {
-    sendMidi(0xB0, 0, 1, this.instance);
+    this.send_midi(0xB0, 
+		   0, 
+		   1);
 }
 
 
@@ -337,11 +348,15 @@ Launchpad.LaunchpadController.prototype.setDutyCycle = function(numerator, denom
 {
     if (numerator < 9)
     {
-	sendMidi(0xB0, 0x1E, 16 * (numerator - 1) + (denominator - 3), this.instance);
+	this.send_midi(0xB0, 
+		       0x1E, 
+		       16 * (numerator - 1) + (denominator - 3));
     }
     else
     {
-	sendMidi(0xB0, 0x1F, 16 * (numerator - 9) + (denominator - 3), this.instance);
+	this.send_midi(0xB0, 
+		       0x1F, 
+		       16 * (numerator - 9) + (denominator - 3));
     }
 }
 
@@ -637,15 +652,16 @@ Launchpad.LaunchpadController.prototype.flushLEDs = function()
     {
 	for(var i = 0; i<80; i+=2)
 	{
-            sendMidi(0x92, 
+            this.send_midi(0x92, 
 		     this.pendingLEDs[i], 
-		     this.pendingLEDs[i+1],
-		     this.instance);
+		     this.pendingLEDs[i+1])
             this.activeLEDs[i] = this.pendingLEDs[i];
             this.activeLEDs[i+1] = this.pendingLEDs[i+1];
 	}
 
-	sendMidi(0xB0, 104 + 7, this.activeLEDs[79], this.instance); // send dummy message to leave optimized mode
+	this.send_midi(0xB0, 
+		       104 + 7, 
+		       this.activeLEDs[79]); // send dummy message to leave optimized mode
     }
     else
     {
@@ -662,24 +678,21 @@ Launchpad.LaunchpadController.prototype.flushLEDs = function()
 		    var column = i & 0x7;
 		    var row = i >> 3;
 	
-		    sendMidi(0x90, 
+		    this.send_midi(0x90, 
 			     row*16 + column, 
-			     colour,
-			     this.instance);
+			     colour);
 		}
 		else if (i < 72)    // Right buttons                                                                                                                                                                
 		{
-		    sendMidi(0x90, 
+		    this.send_midi(0x90, 
 			     8 + (i - 64) * 16, 
-			     colour,
-			     this.instance);
+			     colour);
 		}
 		else    // Top buttons                                                                                                                                                                              
 		{
-		    sendMidi(0xB0, 
+		    this.send_midi(0xB0, 
 			     104 + (i - 72), 
-			     colour,
-		       	     this.instance);
+			     colour);
 		}
             }
 	}
@@ -754,3 +767,22 @@ Launchpad.LaunchpadController.prototype.set_options = function(options)
     }
 }
 	
+/**\fn Launchpad.LaunchpadController.prototype.send_midi
+ *
+ * Sends midi to the midi output defined at midi_instance
+ *
+ * @param status status byte
+ * @param data1 first data byte
+ * @param data2 second data byte
+ *
+ * @returns None
+ */
+
+Launchpad.LaunchpadController.prototype.send_midi = function(status, data1, data2)
+{
+    sendMidi(status, 
+	     data1,
+	     data2, 
+	     this.midi_instance);
+}
+	     
