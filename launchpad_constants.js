@@ -7,6 +7,9 @@
  * Requires:
  * 
  */
+
+var Launchpad = Launchpad || {};
+
 Launchpad.TopButton =
 {
    CURSOR_UP:104,
