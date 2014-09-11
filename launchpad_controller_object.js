@@ -782,9 +782,14 @@ Launchpad.LaunchpadController.prototype.set_options = function(options)
 
 Launchpad.LaunchpadController.prototype.send_midi = function(status, data1, data2)
 {
-    sendMidi(status, 
-	     data1,
-	     data2, 
-	     this.midi_instance);
+    try
+    {
+	host.getMidiOutPort(this.midi_instance).sendMidi(status, data1, data2);
+    }
+    catch(e)
+    {
+
+    }
+
 }
 	     
