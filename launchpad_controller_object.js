@@ -13,7 +13,7 @@ var Launchpad = Launchpad || {};
 
 /**\fn Launchpad.LaunchpadController
  *
- * LaunchpadController consutructor.
+ * LaunchpadController consutructor
  * 
  * @param options options object to set the options of the controller for
  * @param instance controller instance
@@ -56,8 +56,9 @@ Launchpad.LaunchpadController = function(options, instance, midi_instance)
 
     this.noteOn = initArray(0, 128);
 
-    /** Cache for LEDs needing to be updated, which is used so we can determine if we want to send the LEDs using the
-     *  optimized approach or not, and to send only the LEDs that has changed.
+    /** 
+     * Cache for LEDs needing to be updated, which is used so we can determine if we want to send the LEDs using the
+     * optimized approach or not, and to send only the LEDs that has changed.
      */
 
     this.pendingLEDs = new Array(80);
@@ -161,7 +162,6 @@ Launchpad.LaunchpadController.prototype.setActivePage = function(page)
     if (page != this.activePage)
     {
 	this.activePage = page;
-	this.updateNoteTranlationTable();
 
 	// Update indications in the app
 	for(var p = 0; p < 8; p++)
@@ -175,12 +175,12 @@ Launchpad.LaunchpadController.prototype.setActivePage = function(page)
 
 /**\fn Launchpad.LaunchpadController.prototype.getTrackObserverFunc
  * 
+ * Creates a closure for the track observer functions
  *
- *
- * @param track
- * @param varToStore
+ * @param track (integer) track with which to run the callback on
+ * @param varToStore (array) variable to reference with respect to the track
  * 
- * @returns None
+ * @returns (function) function which will be passed to the track observer function
  */
 
 Launchpad.LaunchpadController.prototype.getTrackObserverFunc = function(track, varToStore)
@@ -194,12 +194,12 @@ Launchpad.LaunchpadController.prototype.getTrackObserverFunc = function(track, v
 
 /**\fn Launchpad.LaunchpadController.prototype.getGridObserverFunc
  * 
+ * Creates a closure for the grid observer functions
  *
+ * @param track (integer) track with which to run the callback on
+ * @param varToStore (array) array to store the value in
  *
- * @param track
- * @param varToStore
- *
- * @returns None
+ * @returns (function) function which will be passed to the grid observer function
  */
 
 Launchpad.LaunchpadController.prototype.getGridObserverFunc = function(track, varToStore)
@@ -213,7 +213,7 @@ Launchpad.LaunchpadController.prototype.getGridObserverFunc = function(track, va
 
 /**\fn Launchpad.LaunchpadController.prototype.animateLogo
  * 
- * 
+ * Animation callback function for the startup animation passed to the task scheduler
  *
  * @param None
  * 
@@ -264,7 +264,7 @@ Launchpad.LaunchpadController.prototype.exit = function()
 
 /**\fn Launchpad.LaunchpadController.prototype.resetDevice
  * 
- * 
+ * send a message to the device to reset the whole unit
  *
  * @param None
  *
@@ -285,7 +285,7 @@ Launchpad.LaunchpadController.prototype.resetDevice = function()
 
 /**\fn Launchpad.LaunchpadController.prototype.enableAutoFlashing
  * 
- *
+ * Enable device-handled flashing (minimizes the MIDI traffic on the bus)
  *
  * @param None
  *
@@ -361,43 +361,13 @@ Launchpad.LaunchpadController.prototype.setDutyCycle = function(numerator, denom
 }
 
 
-/**\fn Launchpad.LaunchpadController.prototype.updateNoteTranlationTable
- * 
- *
- *
- * @param None
- *
- * @returns None
- */
-
-Launchpad.LaunchpadController.prototype.updateNoteTranlationTable = function()
-{
-
-    var table = initArray(-1, 128);
-
-    for(var i=0; i<128; i++)
-    {
-	var y = i >> 4;
-	var x = i & 0xF;
-
-	if (x < 8 && this.activePage.shouldKeyBeUsedForNoteInport(x, y))
-	{
-            table[i] = activeNoteMap.cellToKey(x, y);
-	}
-    }
-
-    this.noteInput.setKeyTranslationTable(table);
-
-}
-
-
 /**\fn Launchpad.LaunchpadController.prototype.onMidi
  * 
  * Callback function to be called when midi input is detected
  *
- * @param status
- * @param data1
- * @param data2
+ * @param status (integer) status byte (type/channel) of incoming message
+ * @param data1 (integer) data1 byte of incoming message
+ * @param data2 (integer) data2 byte of incoming message
  *
  * @returns None
  */
@@ -563,9 +533,10 @@ Launchpad.LaunchpadController.prototype.drawStealthascopeLogo = function()
 
 /**\fn Launchpad.LaunchpadController.prototype.setTopLED
  * 
+ * Set one of the top LEDs (navigation or mode LEDs)
  *
- * @param index
- * @param colour
+ * @param index (integer) top led index
+ * @param colour (integer) color to set the LED to
  * 
  * @returns None
  */
@@ -594,11 +565,11 @@ Launchpad.LaunchpadController.prototype.setRightLED = function(index, colour)
 
 /**\fn Launchpad.LaunchpadController.prototype.setCellLED
  * 
+ * Set one of the grid LEDs
  *
- *
- * @param column
- * @param row
- * @param colour
+ * @param column (integer) track of the grid LED
+ * @param row (integer) scene of the grid LED
+ * @param colour (integer) color to set the LED to
  *
  * @returns None
  */
