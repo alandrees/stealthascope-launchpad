@@ -81,8 +81,6 @@ Launchpad.LaunchpadController.prototype.init = function(banks)
 
     host.getMidiInPort(this.midi_instance).setMidiCallback(function(status, data1, data2){self.onMidi(status, data1, data2);});
 
-    this.noteInput = host.getMidiInPort(this.midi_instance).createNoteInput("Launchpad", "80????", "90????");
-    this.noteInput.setShouldConsumeEvents(false);
     this.banks = {};
 
     if(typeof banks === 'undefined')
