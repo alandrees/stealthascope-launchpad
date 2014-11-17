@@ -1,11 +1,11 @@
 /**
  * Copyright 2014 Alan Drees
- *   
+ *
  * Purpose:
  *  Implement the Grid Page mode for the launchpad (the only mode implemented in the 
- *   
+ *
  * Dependencies:
- *   
+ *
  *
  */
 
@@ -74,9 +74,9 @@ Launchpad.GridPage.prototype.updateOutputState = function()
 			      this.temp_mode === Launchpad.TEMPMODE.STOP
 			      ? Launchpad.Colour.RED_FULL
 			      : Launchpad.Colour.OFF);
-    
-/*    this.controller.setTopLED(Launchpad.LED.MIXER, 
-    			      this.mixerAlignedGrid ? Launchpad.Colour.RED_FULL : Launchpad.Colour.RED_LOW);*/
+
+/*    this.controller.setTopLED(Launchpad.LED.MIXER,
+      this.mixerAlignedGrid ? Launchpad.Colour.RED_FULL : Launchpad.Colour.RED_LOW);*/
 };
 
 /**\fn Launchpad.GridPage.prototype.onMixerButton
@@ -135,11 +135,11 @@ Launchpad.GridPage.prototype.onLeft = function(isPressed)
 {
     if (isPressed)
     {
-	if (this.mixerAlignedGrid) 
+	if (this.mixerAlignedGrid)
 	{
 	    this.controller.banks.trackbank.scrollTracksUp();
 	}
-	else 
+	else
 	{
 	    this.controller.banks.trackbank.scrollScenesUp();
 	}
@@ -160,11 +160,11 @@ Launchpad.GridPage.prototype.onRight = function(isPressed)
 {
     if (isPressed)
     {
-	if (this.mixerAlignedGrid) 
+	if (this.mixerAlignedGrid)
 	{
 	    this.controller.banks.trackbank.scrollTracksDown();
 	}
-	else 
+	else
 	{
 	    this.controller.banks.trackbank.scrollScenesDown();
 	}
@@ -185,11 +185,11 @@ Launchpad.GridPage.prototype.onUp = function(isPressed)
 {
     if (isPressed)
     {
-	if (this.mixerAlignedGrid) 
+	if (this.mixerAlignedGrid)
 	{
 	    this.controller.banks.trackbank.scrollScenesUp();
 	}
-	else 
+	else
 	{
 	    this.controller.banks.trackbank.scrollTracksUp();
 	}
@@ -210,7 +210,7 @@ Launchpad.GridPage.prototype.onDown = function(isPressed)
 {
     if (isPressed)
     {
-	if (this.mixerAlignedGrid) 
+	if (this.mixerAlignedGrid)
 	{
 	    this.controller.banks.trackbank.scrollScenesDown();
 	}
@@ -292,7 +292,7 @@ Launchpad.GridPage.prototype.updateGrid = function()
 
 /**\fn Launchpad.GridPage.prototype.updateTrackValue
  *
- * 
+ *
  *
  * @param track
  *
@@ -311,7 +311,7 @@ Launchpad.GridPage.prototype.updateTrackValue = function(track)
 
 	    var row = this.mixerAlignedGrid ? scene : track;
 	    var column = this.mixerAlignedGrid ? track : scene;
-	    
+
 	    var index = track + scene * 8;
 
 	    if(!armed)
@@ -330,17 +330,17 @@ Launchpad.GridPage.prototype.updateTrackValue = function(track)
 	    else
 	    {
 		if(this.controller.isPlaying[index]){
-		    this.controller.setCellLED(column, 
+		    this.controller.setCellLED(column,
 					       row,
 					       Launchpad.Colour.GREEN_FULL);
 		}else if(this.controller.isRecording[index]){
-		    this.controller.setCellLED(column, 
-					       row, 
+		    this.controller.setCellLED(column,
+					       row,
 					       Launchpad.Colour.RED_FLASHING);
 
 		}else if(this.controller.isQueued[index]){
-		    this.controller.setCellLED(column, 
-					       row, 
+		    this.controller.setCellLED(column,
+					       row,
 					       Launchpad.Colour.GREEN_FLASHING);
 		}else{
 		    if(this.controller.hasContent[index]){
@@ -383,11 +383,11 @@ Launchpad.GridPage.prototype.setColumn = function(column, colour)
     for(var scene = 0; scene < this.controller.options.scenes; scene++)
     {
 	var row = this.mixerAlignedGrid ? scene : column;
-	
+
 	this.controller.setCellLED(column, row, colour);
     }
 }
-    
+
 
 
 /**\fn Launchpad.GridPage.prototype.setTempMode
@@ -406,7 +406,7 @@ Launchpad.GridPage.prototype.setTempMode = function(mode)
     }
 
     this.temp_mode = mode;
-    
+
     // Update indications in the app
     for(var p = 0; p < 8; p++)
     {

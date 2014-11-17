@@ -6,4 +6,3 @@ Launchpad.options = { 'devices'      : 1,
 		      'startupmode'  : true,
 		      'layout_order' :[{'anchor'   : 1,
 					'position' : 'below'}]};
-			  

@@ -1,11 +1,11 @@
 /**
  * Copyright 2014 Alan Drees
- *   
+ *
  * Purpose:
  *   Define several launchpad controller constants.  Modified from the factory Bitwig script.
  *
  * Requires:
- * 
+ *
  */
 
 var Launchpad = Launchpad || {};
@@ -91,7 +91,6 @@ Launchpad.TEMPMODE =
     STOP  : 2,
     USER2 : 3,
     MIXER : 4
-    
 };
 
 Launchpad.TRACKMODECOLUMN =
