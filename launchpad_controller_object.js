@@ -653,7 +653,7 @@ Launchpad.LaunchpadController.prototype.flushLEDs = function()
 
 		var colour = this.activeLEDs[i];
 
-		if (i < 64) // Main Grid                                                                                                                                                                            
+		if (i < 64) // Main Grid
 		{
 		    var column = i & 0x7;
 		    var row = i >> 3;
@@ -662,13 +662,13 @@ Launchpad.LaunchpadController.prototype.flushLEDs = function()
 			     row*16 + column, 
 			     colour);
 		}
-		else if (i < 72)    // Right buttons                                                                                                                                                                
+		else if (i < 72)    // Right buttons
 		{
 		    this.send_midi(0x90, 
 			     8 + (i - 64) * 16, 
 			     colour);
 		}
-		else    // Top buttons                                                                                                                                                                              
+		else    // Top buttons
 		{
 		    this.send_midi(0xB0, 
 			     104 + (i - 72), 
