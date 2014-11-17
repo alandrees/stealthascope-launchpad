@@ -86,11 +86,11 @@ Launchpad.LED =
 
 Launchpad.TEMPMODE =
 {
-    OFF:-1,
-    TRACK:1,
-    USER1:2,
-    USER2:3,
-    MIXER:4
+    OFF   : -1,
+    TRACK : 1,
+    STOP  : 2,
+    USER2 : 3,
+    MIXER : 4
     
 };
 
