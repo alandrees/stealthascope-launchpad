@@ -401,7 +401,16 @@ Launchpad.LaunchpadController.prototype.onMidi = function(status, data1, data2)
             break;
 
         case Launchpad.TopButton.USER1:
-            break;
+	    if (isPressed)
+            {
+		this.gridPage.setTempMode(Launchpad.TEMPMODE.STOP);
+	    }
+	    else
+	    {
+		this.gridPage.setTempMode(Launchpad.TEMPMODE.OFF);
+	    }
+
+	    break;
 
         case Launchpad.TopButton.USER2:
             break;
