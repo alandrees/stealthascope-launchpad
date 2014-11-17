@@ -70,6 +70,10 @@ Launchpad.GridPage.prototype.updateOutputState = function()
 			      : (this.temp_mode == Launchpad.TEMPMODE.TRACK
 				 ? Launchpad.Colour.YELLOW_FULL
 				 : Launchpad.Colour.GREEN_FULL));
+    this.controller.setTopLED(Launchpad.LED.USER1,
+			      this.temp_mode === Launchpad.TEMPMODE.STOP
+			      ? Launchpad.Colour.RED_FULL
+			      : Launchpad.Colour.OFF);
     
 /*    this.controller.setTopLED(Launchpad.LED.MIXER, 
     			      this.mixerAlignedGrid ? Launchpad.Colour.RED_FULL : Launchpad.Colour.RED_LOW);*/
@@ -258,6 +262,14 @@ Launchpad.GridPage.prototype.onGridButton = function(row, column, pressed)
 
 	this.controller.banks.trackbank.getTrack(track).select();
     }
+    else if (this.temp_mode === Launchpad.TEMPMODE.STOP)
+    {
+	var track = this.mixerAlignedGrid ? column : row;
+	var scene = this.mixerAlignedGrid ? row : column;
+
+	this.controller.banks.trackbank.getTrack(track).getClipLauncherSlots().stop();
+    }
+
 };
 
 /**\fn Launchpad.GridPage.prototype.updateGrid
