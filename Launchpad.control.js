@@ -1,8 +1,8 @@
 /**
  * Copyright 2014 Alan Drees
- *   
+ *
  * Purpose:
- *   
+ *
  * Requires:
  */
 loadAPI(1);
