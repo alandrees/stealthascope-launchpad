@@ -113,7 +113,7 @@ Launchpad.GridPage.prototype.onSceneButton = function(row, isPressed)
     if (isPressed)
     {
 	this.controller.setRightLED(row, Launchpad.Colour.GREEN_FULL);
-	this.controller.banks.trackbank.launchScene(row);
+	//this.controller.banks.trackbank.launchScene(row);
     }
     else
     {
