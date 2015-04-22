@@ -136,7 +136,7 @@ Launchpad.GridPage.prototype.onLeft = function(isPressed)
     {
 	if (this.mixerAlignedGrid)
 	{
-	    this.controller.banks.trackbank.scrollTracksUp();
+	    this.controller.banks.trackbank.scrollChannelsUp();
 	}
 	else
 	{
@@ -190,7 +190,7 @@ Launchpad.GridPage.prototype.onUp = function(isPressed)
 	}
 	else
 	{
-	    this.controller.banks.trackbank.scrollTracksUp();
+	    this.controller.banks.trackbank.scrollChannelsUp();
 	}
     }
 };
