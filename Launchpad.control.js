@@ -19,7 +19,7 @@ load("launchpad_constants.js");
 load("launchpad_grid.js");
 load("launchpad_options.js");
 
-host.defineController("Stealthascope", "Launchpad", "0.2", "91EC79C0-402F-45D1-B89D-863984C2419D");
+host.defineController("Stealthascope", "Launchpad", "0.2", "91EC79C0-402F-45D1-B89D-863984C2419D", "Alan Drees");
 host.defineMidiPorts(Launchpad.options.devices, Launchpad.options.devices);
 host.addDeviceNameBasedDiscoveryPair(["Launchpad"], ["Launchpad"]);
 host.addDeviceNameBasedDiscoveryPair(["Launchpad S"], ["Launchpad S"]);
