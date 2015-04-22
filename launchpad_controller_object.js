@@ -105,7 +105,7 @@ Launchpad.LaunchpadController.prototype.init = function(banks)
 	track.exists().addValueObserver(this.getTrackObserverFunc(t, this.trackExists));
 	track.addIsSelectedInEditorObserver(this.getTrackObserverFunc(t, this.isSelected));
 
-	var cliplauncher = track.getClipLauncher();
+	var cliplauncher = track.getClipLauncherSlots();
 
 	cliplauncher.addHasContentObserver(this.getGridObserverFunc(t, this.hasContent));
 	cliplauncher.addIsPlayingObserver(this.getGridObserverFunc(t, this.isPlaying));
@@ -167,7 +167,7 @@ Launchpad.LaunchpadController.prototype.setActivePage = function(page)
 	for(var p = 0; p < 8; p++)
 	{
 	    var track = this.banks.trackbank.getTrack(p);
-	    track.getClipLauncher().setIndication(this.activePage == this.gridPage);
+	    track.getClipLauncherSlots().setIndication(this.activePage == this.gridPage);
 	}
     }
 }

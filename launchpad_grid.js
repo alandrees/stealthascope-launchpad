@@ -243,15 +243,15 @@ Launchpad.GridPage.prototype.onGridButton = function(row, column, pressed)
 
 	if (this.is_record_pressed)
 	{
-            this.controller.banks.trackbank.getTrack(track).getClipLauncher().record(scene);
+            this.controller.banks.trackbank.getTrack(track).getClipLauncherSlots().record(scene);
 	}
 	else if (this.is_edit_pressed)
 	{
-            this.controller.banks.trackbank.getTrack(track).getClipLauncher().showInEditor(scene);
+            this.controller.banks.trackbank.getTrack(track).getClipLauncherSlots().showInEditor(scene);
 	}
 	else
 	{
-            this.controller.banks.trackbank.getTrack(track).getClipLauncher().launch(scene);
+            this.controller.banks.trackbank.getTrack(track).getClipLauncherSlots().launch(scene);
 	}
     }
     else if (this.temp_mode === Launchpad.TEMPMODE.TRACK)
