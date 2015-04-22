@@ -88,9 +88,9 @@ Launchpad.LaunchpadController.prototype.init = function(banks)
     {
 	this.banks.transport = host.createTransportSection();
 	this.banks.application = host.createApplication();
-	this.banks.trackbank = host.createMainTrackBankSection(this.options.tracks, 
-							       0,
-							       this.options.scenes);
+	this.banks.trackbank = host.createMainTrackBank(this.options.tracks,
+							0,
+							this.options.scenes);
     }
     else
     {
