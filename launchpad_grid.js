@@ -259,7 +259,7 @@ Launchpad.GridPage.prototype.onGridButton = function(row, column, pressed)
 	var track = this.mixerAlignedGrid ? column : row;
 	var scene = this.mixerAlignedGrid ? row : column;
 
-	this.controller.banks.trackbank.getTrack(track).select();
+	this.controller.banks.trackbank.getTrack(track).selectInEditor();
     }
     else if (this.temp_mode === Launchpad.TEMPMODE.STOP)
     {
