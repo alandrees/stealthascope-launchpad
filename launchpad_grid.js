@@ -161,7 +161,7 @@ Launchpad.GridPage.prototype.onRight = function(isPressed)
     {
 	if (this.mixerAlignedGrid)
 	{
-	    this.controller.banks.trackbank.scrollTracksDown();
+	    this.controller.banks.trackbank.scrollChannelsDown();
 	}
 	else
 	{
@@ -215,7 +215,7 @@ Launchpad.GridPage.prototype.onDown = function(isPressed)
 	}
 	else
 	{
-	    this.controller.banks.trackbank.scrollTracksDown();
+	    this.controller.banks.trackbank.scrollChannelsDown();
 	}
     }
 };
