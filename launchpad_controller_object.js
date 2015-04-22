@@ -119,7 +119,7 @@ Launchpad.LaunchpadController.prototype.init = function(banks)
 						      });
 
 
-    this.banks.trackbank.addCanScrollTracksDownObserver(function(canScroll)
+    this.banks.trackbank.addCanScrollChannelsDownObserver(function(canScroll)
 							{
 							    self.gridPage.canScrollTracksDown = canScroll;
 							});
