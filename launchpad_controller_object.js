@@ -110,7 +110,7 @@ Launchpad.LaunchpadController.prototype.init = function(banks)
 	cliplauncher.addHasContentObserver(this.getGridObserverFunc(t, this.hasContent));
 	cliplauncher.addIsPlayingObserver(this.getGridObserverFunc(t, this.isPlaying));
 	cliplauncher.addIsRecordingObserver(this.getGridObserverFunc(t, this.isRecording));
-	cliplauncher.addIsQueuedObserver(this.getGridObserverFunc(t, this.isQueued));
+	cliplauncher.addIsPlaybackQueuedObserver(this.getGridObserverFunc(t, this.isQueued));
     }
 
     this.banks.trackbank.addCanScrollTracksUpObserver(function(canScroll)
