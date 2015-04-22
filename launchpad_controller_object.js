@@ -1,5 +1,5 @@
 /**
- * Copyright 2014 Alan Drees
+ * Copyright 2014-2015 Alan Drees
  *
  * Purpose:
  *  Stripped-down core implementation of the Launchpad script.
