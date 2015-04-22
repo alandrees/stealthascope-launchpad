@@ -86,7 +86,7 @@ Launchpad.LaunchpadController.prototype.init = function(banks)
 
     if(typeof banks === 'undefined')
     {
-	this.banks.transport = host.createTransportSection();
+	this.banks.transport = host.createTransport();
 	this.banks.application = host.createApplication();
 	this.banks.trackbank = host.createMainTrackBank(this.options.tracks,
 							0,
