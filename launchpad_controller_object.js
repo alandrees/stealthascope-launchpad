@@ -99,7 +99,7 @@ Launchpad.LaunchpadController.prototype.init = function(banks)
 
     for(var t = 0; t < this.options.tracks; t++)
     {
-	var track = this.banks.trackbank.getTrack(t);
+	var track = this.banks.trackbank.getChannel(t);
 
 	track.getArm().addValueObserver(this.getChannelObserverFunc(t, this.arm));
 	track.exists().addValueObserver(this.getChannelObserverFunc(t, this.trackExists));
@@ -166,7 +166,7 @@ Launchpad.LaunchpadController.prototype.setActivePage = function(page)
 	// Update indications in the app
 	for(var p = 0; p < 8; p++)
 	{
-	    var track = this.banks.trackbank.getTrack(p);
+	    var track = this.banks.trackbank.getChannel(p);
 	    track.getClipLauncherSlots().setIndication(this.activePage == this.gridPage);
 	}
     }
