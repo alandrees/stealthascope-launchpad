@@ -93,7 +93,6 @@ Launchpad.GridPage.prototype.onMixerButton = function(isPressed)
     if(isPressed)
     {
 	//this.mixerAlignGrid = !this.mixerAlignGrid;
-	//this.controller.banks.application.setPerspective('arranger');
 	//this.updateOutputState();
     }
 }
