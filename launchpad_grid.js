@@ -238,7 +238,7 @@ Launchpad.GridPage.prototype.onGridButton = function(row, column, pressed)
 
     if (this.temp_mode === Launchpad.TEMPMODE.OFF)
     {
-	var track = this.mixerAlignedGrid ? column : row;
+	var channel = this.mixerAlignedGrid ? column : row;
 	var scene = this.mixerAlignedGrid ? row : column;
 
 	if (this.is_record_pressed)
@@ -256,14 +256,14 @@ Launchpad.GridPage.prototype.onGridButton = function(row, column, pressed)
     }
     else if (this.temp_mode === Launchpad.TEMPMODE.TRACK)
     {
-	var track = this.mixerAlignedGrid ? column : row;
+	var channel = this.mixerAlignedGrid ? column : row;
 	var scene = this.mixerAlignedGrid ? row : column;
 
 	this.controller.banks.trackbank.getTrack(track).selectInEditor();
     }
     else if (this.temp_mode === Launchpad.TEMPMODE.STOP)
     {
-	var track = this.mixerAlignedGrid ? column : row;
+	var channel = this.mixerAlignedGrid ? column : row;
 	var scene = this.mixerAlignedGrid ? row : column;
 
 	this.controller.banks.trackbank.getTrack(track).getClipLauncherSlots().stop();
