@@ -173,17 +173,17 @@ Launchpad.LaunchpadController.prototype.setActivePage = function(page)
 }
 
 
-/**\fn Launchpad.LaunchpadController.prototype.getTrackObserverFunc
+/**\fn Launchpad.LaunchpadController.prototype.getChannelObserverFunc
  *
- * Creates a closure for the track observer functions
+ * Creates a closure for the channel observer functions
  *
- * @param track (integer) track with which to run the callback on
+ * @param channel (integer) track with which to run the callback on
  * @param varToStore (array) variable to reference with respect to the track
  *
- * @returns (function) function which will be passed to the track observer function
+ * @returns (function) function which will be passed to the channel observer function
  */
 
-Launchpad.LaunchpadController.prototype.getTrackObserverFunc = function(track, varToStore)
+Launchpad.LaunchpadController.prototype.getChannelObserverFunc = function(channel, varToStore)
 {
     return function(value)
     {
