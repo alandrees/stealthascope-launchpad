@@ -86,11 +86,11 @@ Launchpad.LaunchpadController.prototype.init = function(banks)
 
     if(typeof banks === 'undefined')
     {
-	this.banks.transport = host.createTransportSection();
+	this.banks.transport = host.createTransport();
 	this.banks.application = host.createApplication();
-	this.banks.trackbank = host.createMainTrackBankSection(this.options.tracks, 
-							       0,
-							       this.options.scenes);
+	this.banks.trackbank = host.createMainTrackBank(this.options.tracks,
+							0,
+							this.options.scenes);
     }
     else
     {
@@ -99,27 +99,27 @@ Launchpad.LaunchpadController.prototype.init = function(banks)
 
     for(var t = 0; t < this.options.tracks; t++)
     {
-	var track = this.banks.trackbank.getTrack(t);
+	var track = this.banks.trackbank.getChannel(t);
 
-	track.getArm().addValueObserver(this.getTrackObserverFunc(t, this.arm));
-	track.exists().addValueObserver(this.getTrackObserverFunc(t, this.trackExists));
-	track.addIsSelectedObserver(this.getTrackObserverFunc(t, this.isSelected));
+	track.getArm().addValueObserver(this.getChannelObserverFunc(t, this.arm));
+	track.exists().addValueObserver(this.getChannelObserverFunc(t, this.trackExists));
+	track.addIsSelectedInEditorObserver(this.getChannelObserverFunc(t, this.isSelected));
 
-	var cliplauncher = track.getClipLauncher();
+	var cliplauncher = track.getClipLauncherSlots();
 
 	cliplauncher.addHasContentObserver(this.getGridObserverFunc(t, this.hasContent));
 	cliplauncher.addIsPlayingObserver(this.getGridObserverFunc(t, this.isPlaying));
 	cliplauncher.addIsRecordingObserver(this.getGridObserverFunc(t, this.isRecording));
-	cliplauncher.addIsQueuedObserver(this.getGridObserverFunc(t, this.isQueued));
+	cliplauncher.addIsPlaybackQueuedObserver(this.getGridObserverFunc(t, this.isQueued));
     }
 
-    this.banks.trackbank.addCanScrollTracksUpObserver(function(canScroll)
+    this.banks.trackbank.addCanScrollChannelsUpObserver(function(canScroll)
 						      {
 							  self.gridPage.canScrollTracksUp = canScroll;
 						      });
 
 
-    this.banks.trackbank.addCanScrollTracksDownObserver(function(canScroll)
+    this.banks.trackbank.addCanScrollChannelsDownObserver(function(canScroll)
 							{
 							    self.gridPage.canScrollTracksDown = canScroll;
 							});
@@ -166,24 +166,24 @@ Launchpad.LaunchpadController.prototype.setActivePage = function(page)
 	// Update indications in the app
 	for(var p = 0; p < 8; p++)
 	{
-	    var track = this.banks.trackbank.getTrack(p);
-	    track.getClipLauncher().setIndication(this.activePage == this.gridPage);
+	    var track = this.banks.trackbank.getChannel(p);
+	    track.getClipLauncherSlots().setIndication(this.activePage == this.gridPage);
 	}
     }
 }
 
 
-/**\fn Launchpad.LaunchpadController.prototype.getTrackObserverFunc
+/**\fn Launchpad.LaunchpadController.prototype.getChannelObserverFunc
  *
- * Creates a closure for the track observer functions
+ * Creates a closure for the channel observer functions
  *
- * @param track (integer) track with which to run the callback on
+ * @param channel (integer) track with which to run the callback on
  * @param varToStore (array) variable to reference with respect to the track
  *
- * @returns (function) function which will be passed to the track observer function
+ * @returns (function) function which will be passed to the channel observer function
  */
 
-Launchpad.LaunchpadController.prototype.getTrackObserverFunc = function(track, varToStore)
+Launchpad.LaunchpadController.prototype.getChannelObserverFunc = function(channel, varToStore)
 {
     return function(value)
     {

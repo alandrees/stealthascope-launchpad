@@ -93,7 +93,6 @@ Launchpad.GridPage.prototype.onMixerButton = function(isPressed)
     if(isPressed)
     {
 	//this.mixerAlignGrid = !this.mixerAlignGrid;
-	//this.controller.banks.application.setPerspective('arranger');
 	//this.updateOutputState();
     }
 }
@@ -137,7 +136,7 @@ Launchpad.GridPage.prototype.onLeft = function(isPressed)
     {
 	if (this.mixerAlignedGrid)
 	{
-	    this.controller.banks.trackbank.scrollTracksUp();
+	    this.controller.banks.trackbank.scrollChannelsUp();
 	}
 	else
 	{
@@ -162,7 +161,7 @@ Launchpad.GridPage.prototype.onRight = function(isPressed)
     {
 	if (this.mixerAlignedGrid)
 	{
-	    this.controller.banks.trackbank.scrollTracksDown();
+	    this.controller.banks.trackbank.scrollChannelsDown();
 	}
 	else
 	{
@@ -191,7 +190,7 @@ Launchpad.GridPage.prototype.onUp = function(isPressed)
 	}
 	else
 	{
-	    this.controller.banks.trackbank.scrollTracksUp();
+	    this.controller.banks.trackbank.scrollChannelsUp();
 	}
     }
 };
@@ -216,7 +215,7 @@ Launchpad.GridPage.prototype.onDown = function(isPressed)
 	}
 	else
 	{
-	    this.controller.banks.trackbank.scrollTracksDown();
+	    this.controller.banks.trackbank.scrollChannelsDown();
 	}
     }
 };
@@ -239,35 +238,35 @@ Launchpad.GridPage.prototype.onGridButton = function(row, column, pressed)
 
     if (this.temp_mode === Launchpad.TEMPMODE.OFF)
     {
-	var track = this.mixerAlignedGrid ? column : row;
+	var channel = this.mixerAlignedGrid ? column : row;
 	var scene = this.mixerAlignedGrid ? row : column;
 
 	if (this.is_record_pressed)
 	{
-            this.controller.banks.trackbank.getTrack(track).getClipLauncher().record(scene);
+            this.controller.banks.trackbank.getChannel(channel).getClipLauncherSlots().record(scene);
 	}
 	else if (this.is_edit_pressed)
 	{
-            this.controller.banks.trackbank.getTrack(track).getClipLauncher().showInEditor(scene);
+            this.controller.banks.trackbank.getChannel(channel).getClipLauncherSlots().showInEditor(scene);
 	}
 	else
 	{
-            this.controller.banks.trackbank.getTrack(track).getClipLauncher().launch(scene);
+            this.controller.banks.trackbank.getChannel(channel).getClipLauncherSlots().launch(scene);
 	}
     }
     else if (this.temp_mode === Launchpad.TEMPMODE.TRACK)
     {
-	var track = this.mixerAlignedGrid ? column : row;
+	var channel = this.mixerAlignedGrid ? column : row;
 	var scene = this.mixerAlignedGrid ? row : column;
 
-	this.controller.banks.trackbank.getTrack(track).select();
+	this.controller.banks.trackbank.getChannel(channel).selectInEditor();
     }
     else if (this.temp_mode === Launchpad.TEMPMODE.STOP)
     {
-	var track = this.mixerAlignedGrid ? column : row;
+	var channel = this.mixerAlignedGrid ? column : row;
 	var scene = this.mixerAlignedGrid ? row : column;
 
-	this.controller.banks.trackbank.getTrack(track).getClipLauncherSlots().stop();
+	this.controller.banks.trackbank.getChannel(channel).getClipLauncherSlots().stop();
     }
 
 };
@@ -410,6 +409,6 @@ Launchpad.GridPage.prototype.setTempMode = function(mode)
     // Update indications in the app
     for(var p = 0; p < 8; p++)
     {
-	var track = this.controller.banks.trackbank.getTrack(p);
+	var track = this.controller.banks.trackbank.getChannel(p);
     }
 };
