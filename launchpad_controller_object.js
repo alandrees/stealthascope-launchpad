@@ -103,7 +103,7 @@ Launchpad.LaunchpadController.prototype.init = function(banks)
 
 	track.getArm().addValueObserver(this.getTrackObserverFunc(t, this.arm));
 	track.exists().addValueObserver(this.getTrackObserverFunc(t, this.trackExists));
-	track.addIsSelectedObserver(this.getTrackObserverFunc(t, this.isSelected));
+	track.addIsSelectedInEditorObserver(this.getTrackObserverFunc(t, this.isSelected));
 
 	var cliplauncher = track.getClipLauncher();
 
