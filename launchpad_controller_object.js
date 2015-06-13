@@ -173,7 +173,7 @@ Launchpad.LaunchpadController.prototype.setActivePage = function(page)
 	this.activePage = page;
 
 	// Update indications in the app
-	for(var p = 0; p < 8; p++)
+	for(var p = 0; p < this.options.channels; p++)
 	{
 	    var track = this.banks.trackbank.getChannel(p);
 	    track.getClipLauncherSlots().setIndication(this.activePage == this.gridPage);
