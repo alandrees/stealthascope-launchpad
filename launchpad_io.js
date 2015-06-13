@@ -257,3 +257,19 @@ Launchpad.LaunchpadIO.prototype.setTopLED = function(index, colour)
 {
     this.pendingLEDs[Launchpad.LED.TOP + index] = colour;
 }
+
+
+/**\fn Launchpad.LaunchpadIO.prototype.setRightLED
+ *
+ * Sets the scene-firing LEDs on the far right
+ *
+ * @param index index to send to
+ * @param colour colour to set the LED to
+ *
+ * @returns None
+ */
+
+Launchpad.LaunchpadIO.prototype.setRightLED = function(index, colour)
+{
+    this.pendingLEDs[Launchpad.LED.SCENE + index] = colour;
+}
