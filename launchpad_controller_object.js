@@ -17,12 +17,11 @@ var Launchpad = Launchpad || {};
  * 
  * @param options options object to set the options of the controller for
  * @param instance controller instance
- * @param midi_instance midi io instance to use
  *
  * @returns None
  */
 
-Launchpad.LaunchpadController = function(options, instance, midi_instance)
+Launchpad.LaunchpadController = function(options, instance)
 {
     if(typeof midi_instance === 'undefined') var midi_instance = instance;
 
