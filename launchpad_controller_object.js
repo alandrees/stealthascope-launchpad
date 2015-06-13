@@ -463,6 +463,7 @@ Launchpad.LaunchpadController.prototype._map_io_object = function(grid_x, grid_y
  *
  * Draws the Stealthascope logo
  *
+ * @param None
  *
  * @returns None
  */
