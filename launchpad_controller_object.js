@@ -73,16 +73,6 @@ Launchpad.LaunchpadController = function(options, instance)
     this.logoPhase = 0;
     this.showStealthascopeLogo = false;
 
-    this.noteOn = initArray(0, 128);
-
-    /**
-     * Cache for LEDs needing to be updated, which is used so we can determine if we want to send the LEDs using the
-     * optimized approach or not, and to send only the LEDs that has changed.
-     */
-
-    this.pendingLEDs = new Array(80);
-    this.activeLEDs = new Array(80);
-
     this.force_optimized_flush = false;
 }
 
