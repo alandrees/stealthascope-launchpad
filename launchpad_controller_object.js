@@ -14,61 +14,70 @@ var Launchpad = Launchpad || {};
 /**\fn Launchpad.LaunchpadController
  *
  * LaunchpadController consutructor
- * 
+ *
  * @param options options object to set the options of the controller for
  * @param instance controller instance
- * @param midi_instance midi io instance to use
  *
  * @returns None
  */
 
-Launchpad.LaunchpadController = function(options, instance, midi_instance)
+Launchpad.LaunchpadController = function(options, instance)
 {
-    if(typeof midi_instance === 'undefined') var midi_instance = instance;
+    var self = this;
 
     this.set_options(options);
     this.instance = instance;
-    this.midi_instance = midi_instance;
 
-    this.arm = initArray(0, 8);
-    this.trackExists = initArray(0, 8);
-    this.isSelected = initArray(0, 8);
+    this.arm = initArray(0, this.options.tracks);
+    this.trackExists = initArray(0, this.options.tracks);
+
+    this.isSelected = initArray(0, this.options.tracks);
+
+    this.hasContent = initArray(0, this.options.channels * this.options.scenes);
+
+    this.isPlaying = initArray(0, this.options.channels * this.options.scenes);
+
+    this.isRecording = initArray(0, this.options.channels * this.options.scenes);
+
+    this.isQueued = initArray(0, this.options.channels * this.options.scenes);
+
+    this.launchpad_io = Array(this.options.devices);
+
+    this.io_grid_array = Launchpad.create_2d_array(this.options.layout_order.length,
+						   this.options.layout_order[0].length);
+
     this.gridPage = new Launchpad.GridPage(this);
 
-    this.hasContent = initArray(0, 64);
-    this.isPlaying = initArray(0, 64);
-    this.isRecording = initArray(0, 64);
-    this.isQueued = initArray(0, 64);
+    var lp_io;
+
+    var lp_io_counter = 0;
+
+    for(var x = 0; x < this.options.layout_order.length; x++)
+    {
+	for(var y = 0; y < this.options.layout_order[0].length; y++)
+	{
+	    lp_io = new Launchpad.LaunchpadIO(this.options,
+					      x,
+					      y,
+					      lp_io_counter);
+
+	    this.launchpad_io[lp_io_counter++] = lp_io;
+
+	    this.io_grid_array[x][y] = lp_io;
+	}
+    }
 
     //these coordinates correspond to the top left corner of the highlighting section
-/*
-    this.coordinates = {'width'  : new ICC.ICC_Value('launchpad',
-						     0,
-						     this),
-			'height' : new ICC.ICC_Value('launchpad',
-						     0,
-						     this)};
-*/
     this.activePage = {};
 
     this.logoPhase = 0;
     this.showStealthascopeLogo = false;
 
-    this.noteOn = initArray(0, 128);
-
-    /**
-     * Cache for LEDs needing to be updated, which is used so we can determine if we want to send the LEDs using the
-     * optimized approach or not, and to send only the LEDs that has changed.
-     */
-
-    this.pendingLEDs = new Array(80);
-    this.activeLEDs = new Array(80);
-
     this.force_optimized_flush = false;
 }
 
 /**\fn Launchpad.LaunchpadController.prototype.init
- * 
+ *
  * Initalization function
  *
  * @param banks banks object generated externally
@@ -79,8 +88,6 @@ Launchpad.LaunchpadController = function(options, instance, midi_instance)
 Launchpad.LaunchpadController.prototype.init = function(banks)
 {
     var self = this;
-
-    host.getMidiInPort(this.midi_instance).setMidiCallback(function(status, data1, data2){self.onMidi(status, data1, data2);});
 
     this.banks = {};
 
@@ -97,32 +104,32 @@ Launchpad.LaunchpadController.prototype.init = function(banks)
 	this.banks = banks;
     }
 
-    for(var t = 0; t < this.options.tracks; t++)
+    for(var c = 0; c < this.options.channels; c++)
     {
-	var track = this.banks.trackbank.getChannel(t);
+	var track = this.banks.trackbank.getChannel(c);
 
-	track.getArm().addValueObserver(this.getChannelObserverFunc(t, this.arm));
-	track.exists().addValueObserver(this.getChannelObserverFunc(t, this.trackExists));
-	track.addIsSelectedInEditorObserver(this.getChannelObserverFunc(t, this.isSelected));
+	track.getArm().addValueObserver(this.getChannelObserverFunc(c, this.arm));
+	track.exists().addValueObserver(this.getChannelObserverFunc(c, this.trackExists));
+	track.addIsSelectedInEditorObserver(this.getChannelObserverFunc(c, this.isSelected));
 
 	var cliplauncher = track.getClipLauncherSlots();
 
-	cliplauncher.addHasContentObserver(this.getGridObserverFunc(t, this.hasContent));
-	cliplauncher.addIsPlayingObserver(this.getGridObserverFunc(t, this.isPlaying));
-	cliplauncher.addIsRecordingObserver(this.getGridObserverFunc(t, this.isRecording));
-	cliplauncher.addIsPlaybackQueuedObserver(this.getGridObserverFunc(t, this.isQueued));
+	cliplauncher.addHasContentObserver(this.getGridObserverFunc(c, this.options.channels, this.hasContent));
+	cliplauncher.addIsPlayingObserver(this.getGridObserverFunc(c, this.options.channels, this.isPlaying));
+	cliplauncher.addIsRecordingObserver(this.getGridObserverFunc(c, this.options.channels, this.isRecording));
+	cliplauncher.addIsPlaybackQueuedObserver(this.getGridObserverFunc(c, this.options.channels, this.isQueued));
     }
 
     this.banks.trackbank.addCanScrollChannelsUpObserver(function(canScroll)
-						      {
-							  self.gridPage.canScrollTracksUp = canScroll;
-						      });
+							{
+							    self.gridPage.canScrollTracksUp = canScroll;
+							});
 
 
     this.banks.trackbank.addCanScrollChannelsDownObserver(function(canScroll)
-							{
-							    self.gridPage.canScrollTracksDown = canScroll;
-							});
+							  {
+							      self.gridPage.canScrollTracksDown = canScroll;
+							  });
 
     this.banks.trackbank.addCanScrollScenesUpObserver(function(canScroll)
 						      {
@@ -133,9 +140,11 @@ Launchpad.LaunchpadController.prototype.init = function(banks)
 							{
 							    self.gridPage.canScrollScenesDown = canScroll;
 							});
-    this.resetDevice();
-    this.setGridMappingMode();
-    this.enableAutoFlashing();
+
+    for(var i = 0; i < this.launchpad_io.length; i++)
+    {
+	this.launchpad_io[i].init(self);
+    }
 
     if(this.showStealthascopeLogo)
     {
@@ -164,7 +173,7 @@ Launchpad.LaunchpadController.prototype.setActivePage = function(page)
 	this.activePage = page;
 
 	// Update indications in the app
-	for(var p = 0; p < 8; p++)
+	for(var p = 0; p < this.options.channels; p++)
 	{
 	    var track = this.banks.trackbank.getChannel(p);
 	    track.getClipLauncherSlots().setIndication(this.activePage == this.gridPage);
@@ -187,7 +196,7 @@ Launchpad.LaunchpadController.prototype.getChannelObserverFunc = function(channe
 {
     return function(value)
     {
-	varToStore[track] = value;
+	varToStore[channel] = value;
     }
 }
 
@@ -197,16 +206,18 @@ Launchpad.LaunchpadController.prototype.getChannelObserverFunc = function(channe
  * Creates a closure for the grid observer functions
  *
  * @param track (integer) track with which to run the callback on
+ * @param width (integer) width of the controller in grid units
  * @param varToStore (array) array to store the value in
  *
  * @returns (function) function which will be passed to the grid observer function
  */
 
-Launchpad.LaunchpadController.prototype.getGridObserverFunc = function(track, varToStore)
+Launchpad.LaunchpadController.prototype.getGridObserverFunc = function(track, width, varToStore)
 {
     return function(scene, value)
     {
-	varToStore[scene*8 + track] = value;
+
+	varToStore[scene * width + track ] = value;
     }
 }
 
@@ -258,219 +269,11 @@ Launchpad.LaunchpadController.prototype.animateLogo = function()
 
 Launchpad.LaunchpadController.prototype.exit = function()
 {
-    this.resetDevice();
-}
-
-
-/**\fn Launchpad.LaunchpadController.prototype.resetDevice
- *
- * send a message to the device to reset the whole unit
- *
- * @param None
- *
- * @returns None
- */
-
-Launchpad.LaunchpadController.prototype.resetDevice = function()
-{
-    this.send_midi(0xB0,
-		   0,
-		   0);
-
-    this.clear();
-
-    this.flushLEDs();
-}
-
-
-/**\fn Launchpad.LaunchpadController.prototype.enableAutoFlashing
- *
- * Enable device-handled flashing (minimizes the MIDI traffic on the bus)
- *
- * @param None
- *
- * @returns None
- */
-
-Launchpad.LaunchpadController.prototype.enableAutoFlashing = function()
-{
-    this.send_midi(0xB0,
-		   0,
-		   0x28);
-}
-
-
-/**\fn Launchpad.LaunchpadController.prototype.setGridMappingMode
- *
- * This sets the grid mapping mode between the drum pad mode or the grid mode (in this case the grid mode
- *
- * @param None
- *
- * @returns None
- */
-
-Launchpad.LaunchpadController.prototype.setGridMappingMode = function()
-{
-    this.send_midi(0xB0,
-		   0,
-		   1);
-}
-
-
-/**\fn Launchpad.LaunchpadController.prototype.setGridMappingMode
- *
- * This sets the grid mapping mode between the drum pad mode or the grid mode (in this case the grid mode
- *
- * @param None
- *
- * @returns None
- */
-
-Launchpad.LaunchpadController.prototype.setDrumMappingMode = function()
-{
-    this.send_midi(0xB0,
-		   0,
-		   1);
-}
-
-
-/**\fn Launchpad.LaunchpadController.prototype.setDutyCycle
- *
- * Sets the LED duty cycle by passing a numerator and denominator
- *
- * @param numerator duty cycle numerator
- * @param denominator duty cycle denominator
- *
- * @returns None
- */
-
-Launchpad.LaunchpadController.prototype.setDutyCycle = function(numerator, denominator)
-{
-    if (numerator < 9)
+    for(var i = 0; i < this.launchpad_io.length; i++)
     {
-	this.send_midi(0xB0,
-		       0x1E,
-		       16 * (numerator - 1) + (denominator - 3));
-    }
-    else
-    {
-	this.send_midi(0xB0,
-		       0x1F,
-		       16 * (numerator - 9) + (denominator - 3));
+	this.launchpad_io[i].resetDevice();
     }
 }
-
-
-/**\fn Launchpad.LaunchpadController.prototype.onMidi
- *
- * Callback function to be called when midi input is detected
- *
- * @param status (integer) status byte (type/channel) of incoming message
- * @param data1 (integer) data1 byte of incoming message
- * @param data2 (integer) data2 byte of incoming message
- *
- * @returns None
- */
-
-Launchpad.LaunchpadController.prototype.onMidi = function(status, data1, data2)
-{
-    if (MIDIChannel(status) != 0) return;
-
-    if (isChannelController(status))
-    {
-	var isPressed = data2 > 0;
-
-	switch(data1)
-	{
-	case Launchpad.TopButton.SESSION:
-	    if (isPressed)
-	    {
-		if(this.activePage.name !== "grid"){
-		    this.setActivePage(this.gridPage);
-		}
-		else
-		{
-		    this.gridPage.setTempMode(Launchpad.TEMPMODE.TRACK);
-		}
-	    }
-	    else
-	    {
-		this.gridPage.setTempMode(Launchpad.TEMPMODE.OFF);
-	    }
-
-	    break;
-
-        case Launchpad.TopButton.USER1:
-	    if (isPressed)
-	    {
-		this.gridPage.setTempMode(Launchpad.TEMPMODE.STOP);
-	    }
-	    else
-	    {
-		this.gridPage.setTempMode(Launchpad.TEMPMODE.OFF);
-	    }
-
-	    break;
-
-        case Launchpad.TopButton.USER2:
-            break;
-
-        case Launchpad.TopButton.MIXER:
-	    this.activePage.onMixerButton(isPressed);
-            break;
-
-        case Launchpad.TopButton.CURSOR_LEFT:
-            this.activePage.onLeft(isPressed);
-            break;
-
-        case Launchpad.TopButton.CURSOR_RIGHT:
-            this.activePage.onRight(isPressed);
-            break;
-
-        case Launchpad.TopButton.CURSOR_UP:
-            this.activePage.onUp(isPressed);
-            break;
-
-        case Launchpad.TopButton.CURSOR_DOWN:
-            this.activePage.onDown(isPressed);
-            break;
-	}
-    }
-
-    if (isNoteOn(status) || isNoteOff(status, data2))
-    {
-	var row = data1 >> 4;
-	var column = data1 & 0xF;
-
-	if (column < 8)
-	{
-	    this.activePage.onGridButton(row, column, data2 > 0);
-	}
-	else
-	{
-	    this.activePage.onSceneButton(row, data2 > 0);
-	}
-    }
-}
-
-
-/**\fn Launchpad.LaunchpadController.prototype.clear
- *
- * Clear all the LEDs
- *
- * @param None
- *
- * @returns None
- */
-
-Launchpad.LaunchpadController.prototype.clear = function()
-{
-    for(var i=0; i<80; i++)
-    {
-	this.pendingLEDs[i] = Launchpad.Colour.OFF;
-    }
-}
-
 
 /**\fn Launchpad.LaunchpadController.prototype.flush
  *
@@ -489,11 +292,170 @@ Launchpad.LaunchpadController.prototype.flush = function()
     }
     else
     {
-	this.activePage.updateOutputState();
+	if(typeof this.activePage.updateOutputState === 'function')
+	{
+	    this.activePage.updateOutputState();
+	}
     }
 
-    this.flushLEDs();
+    /*TODO: ADD LOGIC TO DETERMINE IF ONLY ONE CONTROLLER REQUIRES UPDATING*/
 
+    for(var i = 0; i < this.launchpad_io.length; i++)
+    {
+	this.launchpad_io[i].flushLEDs();
+    }
+}
+
+
+/**\fn Launchpad.LaunchpadController.prototype.setCellLED
+ *
+ * Interface method for the controller IO subsystem to manipulate the state
+ * of the grid cell LEDs
+ *
+ * @param column (integer) column index of LED
+ * @param row (integer) row index of LED
+ * @param value (integer) LED value to set
+ *
+ * @returns None
+ */
+
+Launchpad.LaunchpadController.prototype.setCellLED = function(column, row, value)
+{
+    var output = this._map_io_object(column, row);
+
+    column = column % Launchpad.NUM_SCENES;
+    row = row % Launchpad.NUM_CHANNELS;
+
+    output.setCellLED(column,
+		      row,
+		      value);
+}
+
+
+/**\fn Launchpad.LaunchpadController.prototype.setTopLED
+ *
+ * Interface method for the controller IO subsystem to manipulate the state
+ * of the top (mode) LEDs
+ *
+ * @param index (integer) index of top-row CC to set
+ * @param value (integer) value to set the LED to
+ * @param ctrl (integer) controller to output to [OPTIONAL]
+ *
+ * @returns None
+ */
+
+Launchpad.LaunchpadController.prototype.setTopLED = function(index, value, ctrl)
+{
+    if(typeof ctrl === 'undefined'){var ctrl = 0;}
+
+    if(this.options.shared_navigation)
+    {
+	for(var i = 0; i < this.launchpad_io.length; i++)
+	{
+	    this.launchpad_io[i].setTopLED(index, value);
+	}
+    }
+    else
+    {
+	this.launchpad_io[ctrl].setTopLED(index, value);
+    }
+}
+
+
+/**\fn Launchpad.LaunchpadController.prototype.setRightLED
+ *
+ * Interface method for the controller IO subsystem to manipulate the state
+ * of the right-side LEDs
+ *
+ * @param index (integer) control index to update on the controller
+ * @param value (integer) value to set the control to
+ * @param ctrl (integer) controller
+ *
+ * @returns None
+ */
+
+Launchpad.LaunchpadController.prototype.setRightLED = function(index, value, ctrl)
+{
+    if(typeof ctrl === 'integer')
+    {
+	this.launchpad_io[ctrl].setRightLED(index, value);
+    }
+    else
+    {
+	for(var i = 0; i < this.launchpad_io.length; i++)
+	{
+	    this.launchpad_io[i].setRightLED(index, value);
+	}
+    }
+}
+
+
+/**\fn Launchpad.LaunchpadController.prototype.clear
+ *
+ * Interface method for the controller IO subsystem to clear an entire controller grid of values
+ *
+ * @param index (integer) controller index to clear [OPTIONAL]
+ *
+ * @returns None
+ */
+
+Launchpad.LaunchpadController.prototype.clear = function(index)
+{
+    if(typeof index === 'undefined')
+    {
+	for(var i = 0; i < this.launchpad_io.length; i++)
+	{
+	    this.launchpad_io[i].clear();
+	}
+    }
+    else
+    {
+	this.launchpad_io[i].clear();
+    }
+}
+
+
+/**\fn Launchpad.LaunchpadController.prototype._map_io_object
+ *
+ * Maps grid coordinates to a particularly underlying physical controller object
+ *
+ * @param grid_x (integer) x-coordinate of the vector pair
+ * @param grid_y (integer) y-coordinate of the vector pair
+ *
+ * @returns (LaunchpadIO) LaunchpadIO object representing a physical controller
+ */
+
+Launchpad.LaunchpadController.prototype._map_io_object = function(grid_x, grid_y)
+{
+    var ctrl_x = 0;
+    var ctrl_y = 0;
+
+    if(this.launchpad_io.length === 1)
+    {
+	return this.launchpad_io[0];
+    }
+    else
+    {
+	if((grid_x) % Launchpad.NUM_TRACKS == 0)
+	{
+	    ctrl_x = grid_x / Launchpad.NUM_TRACKS;
+	}
+	else
+	{
+	    ctrl_x = ( grid_x - ((grid_x) % Launchpad.NUM_TRACKS) ) / Launchpad.NUM_TRACKS
+	}
+
+	if((grid_y) % Launchpad.NUM_SCENES == 0)
+	{
+	    ctrl_y = grid_y / Launchpad.NUM_SCENES;
+	}
+	else
+	{
+	    ctrl_y = ( grid_y - ((grid_y) % Launchpad.NUM_SCENES) ) / Launchpad.NUM_SCENES
+	}
+
+	return this.io_grid_array[ctrl_x][ctrl_y];
+    }
 }
 
 
@@ -540,188 +502,102 @@ Launchpad.LaunchpadController.prototype.drawStealthascopeLogo = function()
 }
 
 
-/**\fn Launchpad.LaunchpadController.prototype.setTopLED
+/**\fn Launchpad.LaunchpadController.prototype.onMidi
  *
- * Set one of the top LEDs (navigation or mode LEDs)
+ * Callback function to be called when midi input is detected
  *
- * @param index (integer) top led index
- * @param colour (integer) color to set the LED to
- *
- * @returns None
- */
-
-Launchpad.LaunchpadController.prototype.setTopLED = function(index, colour)
-{
-    this.pendingLEDs[Launchpad.LED.TOP + index] = colour;
-}
-
-
-/**\fn Launchpad.LaunchpadController.prototype.setRightLED
- *
- * Sets the scene-firing LEDs on the far right
- *
- * @param index index to send to
- * @param colour colour to set the LED to
+ * @param status (integer) status byte (type/channel) of incoming message
+ * @param data1 (integer) data1 byte of incoming message
+ * @param data2 (integer) data2 byte of incoming message
+ * @param grid_x (integer) x-index of hardware component
+ * @param grid_y (integer) y-index of hardware component
  *
  * @returns None
  */
 
-Launchpad.LaunchpadController.prototype.setRightLED = function(index, colour)
+Launchpad.LaunchpadController.prototype.onMidi = function(status, data1, data2, grid_x, grid_y)
 {
-    this.pendingLEDs[Launchpad.LED.SCENE + index] = colour;
-}
+    if (MIDIChannel(status) != 0) return;
 
-
-/**\fn Launchpad.LaunchpadController.prototype.setCellLED
- *
- * Set one of the grid LEDs
- *
- * @param column (integer) track of the grid LED
- * @param row (integer) scene of the grid LED
- * @param colour (integer) color to set the LED to
- *
- * @returns None
- */
-
-Launchpad.LaunchpadController.prototype.setCellLED = function(column, row, colour)
-{
-    this.pendingLEDs[row * 8 + column] = colour;
-}
-
-
-/**\fn Launchpad.LaunchpadController.prototype.flushLEDs
- *
- * Flush all the output to the controller, updating the LEDs
- *
- * @param None
- *
- * @returns None
- */
-
-Launchpad.LaunchpadController.prototype.flushLEDs = function()
-{
-    if(typeof this.flushcount === 'undefined')
+    if (isChannelController(status))
     {
-	for(var x in this.pendingLEDs)
+	var isPressed = data2 > 0;
+
+	switch(data1)
 	{
-	    if(typeof this.pendingLEDs[x] === 'object')
+	case Launchpad.TopButton.SESSION:
+	    if (isPressed)
 	    {
-		dump(this.pendingLEDs[x]);
+		if(this.activePage.name !== "grid"){
+		    this.setActivePage(this.gridPage);
+		}
+		else
+		{
+		    this.gridPage.setTempMode(Launchpad.TEMPMODE.TRACK);
+		}
 	    }
+	    else
+	    {
+		this.gridPage.setTempMode(Launchpad.TEMPMODE.OFF);
+	    }
+
+	    break;
+
+	    case Launchpad.TopButton.USER1:
+	    if (isPressed)
+	    {
+		this.gridPage.setTempMode(Launchpad.TEMPMODE.STOP);
+	    }
+	    else
+	    {
+		this.gridPage.setTempMode(Launchpad.TEMPMODE.OFF);
+	    }
+
+	    break;
+
+	    case Launchpad.TopButton.USER2:
+	    break;
+
+	    case Launchpad.TopButton.MIXER:
+	    this.activePage.onMixerButton(isPressed);
+	    break;
+
+	    case Launchpad.TopButton.CURSOR_LEFT:
+	    this.activePage.onLeft(isPressed);
+	    break;
+
+	    case Launchpad.TopButton.CURSOR_RIGHT:
+	    this.activePage.onRight(isPressed);
+	    break;
+
+	    case Launchpad.TopButton.CURSOR_UP:
+	    this.activePage.onUp(isPressed);
+	    break;
+
+	    case Launchpad.TopButton.CURSOR_DOWN:
+	    this.activePage.onDown(isPressed);
+	    break;
 	}
-	this.flushcount = true;
     }
 
-
-    var changedCount = 0;
-
-    for(var i=0; i<80; i++)
+    if (isNoteOn(status) || isNoteOff(status, data2))
     {
-	if (this.pendingLEDs[i] != this.activeLEDs[i])
+	var row = data1 >> 4;
+	var column = data1 & 0xF;
+
+	if (column < Launchpad.NUM_TRACKS)
 	{
-	    changedCount++;
+	    row = (row + (grid_y * Launchpad.NUM_SCENES));
+	    column = (column + (grid_x * Launchpad.NUM_TRACKS));
+	    this.activePage.onGridButton(row, column, data2 > 0);
 	}
-    }
-
-    if (changedCount == 0)
-    {
-	return;
-    }
-
-    if (changedCount > 30)
-    {
-	for(var i = 0; i<80; i+=2)
+	else
 	{
-            this.send_midi(0x92,
-		     this.pendingLEDs[i],
-		     this.pendingLEDs[i+1])
-            this.activeLEDs[i] = this.pendingLEDs[i];
-            this.activeLEDs[i+1] = this.pendingLEDs[i+1];
-	}
-
-	this.send_midi(0xB0,
-		       104 + 7,
-		       this.activeLEDs[79]); // send dummy message to leave optimized mode
-    }
-    else
-    {
-	for(var i = 0; i<80; i++)
-	{
-            if (this.pendingLEDs[i] != this.activeLEDs[i])
-            {
-		this.activeLEDs[i] = this.pendingLEDs[i];
-
-		var colour = this.activeLEDs[i];
-
-		if (i < 64) // Main Grid
-		{
-		    var column = i & 0x7;
-		    var row = i >> 3;
-
-		    this.send_midi(0x90,
-			     row*16 + column,
-			     colour);
-		}
-		else if (i < 72)    // Right buttons
-		{
-		    this.send_midi(0x90,
-			     8 + (i - 64) * 16,
-			     colour);
-		}
-		else    // Top buttons
-		{
-		    this.send_midi(0xB0,
-			     104 + (i - 72),
-			     colour);
-		}
-            }
+	    this.activePage.onSceneButton(row + (grid_x * Launchpad.NUM_TRACKS), data2 > 0);
 	}
     }
 }
 
-/**\fn Launchpad.LaunchpadController.prototype.textToPattern
- *
- * Format text into a bit pattern that can be displayed on 4-pixels height
- *
- * @param text to convert to a pattern
- *
- * @returns array containing a list of grid patterns to be executed
- */
-
-Launchpad.LaunchpadController.prototype.textToPattern = function(text)
-{
-    var result = [];
-
-    for(var i=0; i< text.length; i++)
-    {
-	if (i != 0) result.push(0x0); // mandatory spacing
-
-	switch (text.charAt(i))
-	{
-        case '0':
-            result.push(0x6, 0x9, 0x6);
-            break;
-
-        case '1':
-            result.push(0x4, 0xF);
-            break;
-
-        case '2':
-            result.push(0x5, 0xB, 0x5);
-            break;
-
-        case '3':
-            result.push(0x9, 0x9, 0x6);
-            break;
-
-        case '4':
-            result.push(0xE, 0x3, 0x2);
-            break;
-	}
-    }
-
-    return result;
-}
 
 /**\fn Launchpad.LaunchpadController.prototype.set_options
  *
@@ -745,28 +621,4 @@ Launchpad.LaunchpadController.prototype.set_options = function(options)
 	    this.options[option] = options[option];
 	}
     }
-}
-
-/**\fn Launchpad.LaunchpadController.prototype.send_midi
- *
- * Sends midi to the midi output defined at midi_instance
- *
- * @param status status byte
- * @param data1 first data byte
- * @param data2 second data byte
- *
- * @returns None
- */
-
-Launchpad.LaunchpadController.prototype.send_midi = function(status, data1, data2)
-{
-    try
-    {
-	host.getMidiOutPort(this.midi_instance).sendMidi(status, data1, data2);
-    }
-    catch(e)
-    {
-
-    }
-
 }

@@ -74,9 +74,6 @@ Launchpad.GridPage.prototype.updateOutputState = function()
 			      this.temp_mode === Launchpad.TEMPMODE.STOP
 			      ? Launchpad.Colour.RED_FULL
 			      : Launchpad.Colour.OFF);
-
-/*    this.controller.setTopLED(Launchpad.LED.MIXER,
-      this.mixerAlignedGrid ? Launchpad.Colour.RED_FULL : Launchpad.Colour.RED_LOW);*/
 };
 
 /**\fn Launchpad.GridPage.prototype.onMixerButton
@@ -243,15 +240,15 @@ Launchpad.GridPage.prototype.onGridButton = function(row, column, pressed)
 
 	if (this.is_record_pressed)
 	{
-            this.controller.banks.trackbank.getChannel(channel).getClipLauncherSlots().record(scene);
+	    this.controller.banks.trackbank.getChannel(channel).getClipLauncherSlots().record(scene);
 	}
 	else if (this.is_edit_pressed)
 	{
-            this.controller.banks.trackbank.getChannel(channel).getClipLauncherSlots().showInEditor(scene);
+	    this.controller.banks.trackbank.getChannel(channel).getClipLauncherSlots().showInEditor(scene);
 	}
 	else
 	{
-            this.controller.banks.trackbank.getChannel(channel).getClipLauncherSlots().launch(scene);
+	    this.controller.banks.trackbank.getChannel(channel).getClipLauncherSlots().launch(scene);
 	}
     }
     else if (this.temp_mode === Launchpad.TEMPMODE.TRACK)
@@ -268,7 +265,6 @@ Launchpad.GridPage.prototype.onGridButton = function(row, column, pressed)
 
 	this.controller.banks.trackbank.getChannel(channel).getClipLauncherSlots().stop();
     }
-
 };
 
 /**\fn Launchpad.GridPage.prototype.updateGrid
@@ -282,7 +278,7 @@ Launchpad.GridPage.prototype.onGridButton = function(row, column, pressed)
 
 Launchpad.GridPage.prototype.updateGrid = function()
 {
-   for(var t=0; t < this.controller.options.tracks; t++)
+   for(var t = 0; t < this.controller.options.channels; t++)
    {
       this.updateTrackValue(t);
    }
@@ -301,17 +297,15 @@ Launchpad.GridPage.prototype.updateGrid = function()
 Launchpad.GridPage.prototype.updateTrackValue = function(track)
 {
     if(this.temp_mode === Launchpad.TEMPMODE.OFF){
-
 	var armed = this.controller.arm[track];
 	var selected = this.controller.isSelected[track];
 
-	for(var scene = 0; scene < 8; scene++)
+	for(var scene = 0; scene < this.controller.options.scenes; scene++)
 	{
-
 	    var row = this.mixerAlignedGrid ? scene : track;
 	    var column = this.mixerAlignedGrid ? track : scene;
 
-	    var index = track + scene * 8;
+	    var index = track + scene * this.controller.options.tracks;
 
 	    if(!armed)
 	    {
@@ -388,7 +382,6 @@ Launchpad.GridPage.prototype.setColumn = function(column, colour)
 }
 
 
-
 /**\fn Launchpad.GridPage.prototype.setTempMode
  *
  * Set the momentary/instantanous/temporary mode for the page
@@ -407,7 +400,7 @@ Launchpad.GridPage.prototype.setTempMode = function(mode)
     this.temp_mode = mode;
 
     // Update indications in the app
-    for(var p = 0; p < 8; p++)
+    for(var p = 0; p < this.controller.options.channels; p++)
     {
 	var track = this.controller.banks.trackbank.getChannel(p);
     }
