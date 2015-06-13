@@ -27,11 +27,11 @@ host.addDeviceNameBasedDiscoveryPair(["Launchpad S"], ["Launchpad S"]);
 
 for(var i = 1; i < Launchpad.options.devices; i++)
 {
-   var name = i.toString() + "- Launchpad";
-   host.addDeviceNameBasedDiscoveryPair([name], [name]);
-   host.addDeviceNameBasedDiscoveryPair(["Launchpad MIDI " + i.toString()], ["Launchpad MIDI " + i.toString()]);
-   host.addDeviceNameBasedDiscoveryPair(["Launchpad S " + i.toString()], ["Launchpad S " + i.toString()]);
-   host.addDeviceNameBasedDiscoveryPair(["Launchpad S MIDI " + i.toString()], ["Launchpad S MIDI " + i.toString()]);
+    var name = i.toString() + "- Launchpad";
+    host.addDeviceNameBasedDiscoveryPair([name], [name]);
+    host.addDeviceNameBasedDiscoveryPair(["Launchpad MIDI " + i.toString()], ["Launchpad MIDI " + i.toString()]);
+    host.addDeviceNameBasedDiscoveryPair(["Launchpad S " + i.toString()], ["Launchpad S " + i.toString()]);
+    host.addDeviceNameBasedDiscoveryPair(["Launchpad S MIDI " + i.toString()], ["Launchpad S MIDI " + i.toString()]);
 }
 
 if(host.platformIsLinux())
