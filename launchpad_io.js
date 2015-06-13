@@ -132,3 +132,20 @@ Launchpad.LaunchpadIO.prototype.enableAutoFlashing = function()
 		   0,
 		   0x28);
 }
+
+
+/**\fn Launchpad.LaunchpadIO.prototype.setGridMappingMode
+ *
+ * This sets the grid mapping mode between the drum pad mode or the grid mode (in this case the grid mode
+ *
+ * @param None
+ *
+ * @returns None
+ */
+
+Launchpad.LaunchpadIO.prototype.setGridMappingMode = function()
+{
+    this.send_midi(0xB0,
+		   0,
+		   1);
+}
