@@ -265,7 +265,6 @@ Launchpad.GridPage.prototype.onGridButton = function(row, column, pressed)
 
 	this.controller.banks.trackbank.getChannel(channel).getClipLauncherSlots().stop();
     }
-
 };
 
 /**\fn Launchpad.GridPage.prototype.updateGrid
