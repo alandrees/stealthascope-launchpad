@@ -19,6 +19,7 @@ load('launchpad_page.js');
 load("launchpad_constants.js");
 load("launchpad_grid.js");
 load("launchpad_options.js");
+load("launchpad_util.js");
 
 host.defineController("Stealthascope", "Launchpad", "0.2", "91EC79C0-402F-45D1-B89D-863984C2419D", "Alan Drees");
 host.defineMidiPorts(Launchpad.options.devices, Launchpad.options.devices);
