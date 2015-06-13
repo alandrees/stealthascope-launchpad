@@ -502,21 +502,6 @@ Launchpad.LaunchpadController.prototype.drawStealthascopeLogo = function()
 }
 
 
-/**\fn Launchpad.LaunchpadController.prototype.setRightLED
- *
- * Sets the scene-firing LEDs on the far right
- *
- * @param index index to send to
- * @param colour colour to set the LED to
- *
- */
-
-Launchpad.LaunchpadController.prototype.setRightLED = function(index, colour)
-{
-    this.pendingLEDs[Launchpad.LED.SCENE + index] = colour;
-}
-
-
 /**\fn Launchpad.LaunchpadController.prototype.setCellLED
  *
  * Set one of the grid LEDs
