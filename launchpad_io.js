@@ -217,3 +217,27 @@ Launchpad.LaunchpadIO.prototype.midi_callback = function(status, data1, data2)
 			 this.grid_y);
     }
 }
+
+
+/**\fn Launchpad.LaunchpadIO.prototype.send_midi
+ *
+ * Sends midi to the designated midi_out
+ *
+ * @param status (integer) status byte
+ * @param data1 (integer) first data byte
+ * @param data2 (integer) second data byte
+ *
+ * @returns None
+ */
+
+Launchpad.LaunchpadIO.prototype.send_midi = function(status, data1, data2)
+{
+    try
+    {
+	host.getMidiOutPort(this.midi_out).sendMidi(status, data1, data2);
+    }
+    catch(e)
+    {
+
+    }
+}
