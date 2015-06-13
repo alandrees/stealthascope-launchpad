@@ -49,7 +49,7 @@ var icc_network = new Array();
 
 for(var i = 0; i < 1; i++)
 {
-    controllers[i] = new Launchpad.LaunchpadController(Launchpad.options, i);
+    controllers[i] = new Launchpad.LaunchpadController(Launchpad.options);
 }
 
 function init()
