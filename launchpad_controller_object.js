@@ -332,18 +332,32 @@ Launchpad.LaunchpadController.prototype.setCellLED = function(column, row, value
 }
 
 
+/**\fn Launchpad.LaunchpadController.prototype.setTopLED
  *
+ * Interface method for the controller IO subsystem to manipulate the state
+ * of the top (mode) LEDs
  *
+ * @param index (integer) index of top-row CC to set
+ * @param value (integer) value to set the LED to
+ * @param ctrl (integer) controller to output to [OPTIONAL]
  *
  * @returns None
  */
 
+Launchpad.LaunchpadController.prototype.setTopLED = function(index, value, ctrl)
 {
+    if(typeof ctrl === 'undefined'){var ctrl = 0;}
 
+    if(this.options.shared_navigation)
     {
+	for(var i = 0; i < this.launchpad_io.length; i++)
+	{
+	    this.launchpad_io[i].setTopLED(index, value);
+	}
     }
     else
     {
+	this.launchpad_io[ctrl].setTopLED(index, value);
     }
 }
 
