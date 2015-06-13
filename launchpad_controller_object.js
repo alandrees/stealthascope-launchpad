@@ -206,16 +206,18 @@ Launchpad.LaunchpadController.prototype.getChannelObserverFunc = function(channe
  * Creates a closure for the grid observer functions
  *
  * @param track (integer) track with which to run the callback on
+ * @param width (integer) width of the controller in grid units
  * @param varToStore (array) array to store the value in
  *
  * @returns (function) function which will be passed to the grid observer function
  */
 
-Launchpad.LaunchpadController.prototype.getGridObserverFunc = function(track, varToStore)
+Launchpad.LaunchpadController.prototype.getGridObserverFunc = function(track, width, varToStore)
 {
     return function(scene, value)
     {
-	varToStore[scene*8 + track] = value;
+
+	varToStore[scene * width + track ] = value;
     }
 }
 
