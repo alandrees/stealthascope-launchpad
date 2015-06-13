@@ -622,27 +622,3 @@ Launchpad.LaunchpadController.prototype.set_options = function(options)
 	}
     }
 }
-
-/**\fn Launchpad.LaunchpadController.prototype.send_midi
- *
- * Sends midi to the midi output defined at midi_instance
- *
- * @param status status byte
- * @param data1 first data byte
- * @param data2 second data byte
- *
- * @returns None
- */
-
-Launchpad.LaunchpadController.prototype.send_midi = function(status, data1, data2)
-{
-    try
-    {
-	host.getMidiOutPort(this.midi_instance).sendMidi(status, data1, data2);
-    }
-    catch(e)
-    {
-
-    }
-
-}
