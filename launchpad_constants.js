@@ -104,5 +104,6 @@ Launchpad.TRACKMODECOLUMN =
 };
 
 Launchpad.NUM_TRACKS = 8;
+Launchpad.NUM_CHANNELS = 8;
 Launchpad.NUM_SENDS = 2;
 Launchpad.NUM_SCENES = 8;
