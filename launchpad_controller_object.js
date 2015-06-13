@@ -104,20 +104,20 @@ Launchpad.LaunchpadController.prototype.init = function(banks)
 	this.banks = banks;
     }
 
-    for(var t = 0; t < this.options.tracks; t++)
+    for(var c = 0; c < this.options.channels; c++)
     {
-	var track = this.banks.trackbank.getChannel(t);
+	var track = this.banks.trackbank.getChannel(c);
 
-	track.getArm().addValueObserver(this.getChannelObserverFunc(t, this.arm));
-	track.exists().addValueObserver(this.getChannelObserverFunc(t, this.trackExists));
-	track.addIsSelectedInEditorObserver(this.getChannelObserverFunc(t, this.isSelected));
+	track.getArm().addValueObserver(this.getChannelObserverFunc(c, this.arm));
+	track.exists().addValueObserver(this.getChannelObserverFunc(c, this.trackExists));
+	track.addIsSelectedInEditorObserver(this.getChannelObserverFunc(c, this.isSelected));
 
 	var cliplauncher = track.getClipLauncherSlots();
 
-	cliplauncher.addHasContentObserver(this.getGridObserverFunc(t, this.hasContent));
-	cliplauncher.addIsPlayingObserver(this.getGridObserverFunc(t, this.isPlaying));
-	cliplauncher.addIsRecordingObserver(this.getGridObserverFunc(t, this.isRecording));
-	cliplauncher.addIsPlaybackQueuedObserver(this.getGridObserverFunc(t, this.isQueued));
+	cliplauncher.addHasContentObserver(this.getGridObserverFunc(c, this.options.channels, this.hasContent));
+	cliplauncher.addIsPlayingObserver(this.getGridObserverFunc(c, this.options.channels, this.isPlaying));
+	cliplauncher.addIsRecordingObserver(this.getGridObserverFunc(c, this.options.channels, this.isRecording));
+	cliplauncher.addIsPlaybackQueuedObserver(this.getGridObserverFunc(c, this.options.channels, this.isQueued));
     }
 
     this.banks.trackbank.addCanScrollChannelsUpObserver(function(canScroll)
