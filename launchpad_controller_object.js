@@ -368,7 +368,6 @@ Launchpad.LaunchpadController.prototype.flush = function()
  *
  * Updates the controller with new data
  *
- * @param None
  *
  * @returns None
  */
