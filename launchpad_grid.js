@@ -74,9 +74,6 @@ Launchpad.GridPage.prototype.updateOutputState = function()
 			      this.temp_mode === Launchpad.TEMPMODE.STOP
 			      ? Launchpad.Colour.RED_FULL
 			      : Launchpad.Colour.OFF);
-
-/*    this.controller.setTopLED(Launchpad.LED.MIXER,
-      this.mixerAlignedGrid ? Launchpad.Colour.RED_FULL : Launchpad.Colour.RED_LOW);*/
 };
 
 /**\fn Launchpad.GridPage.prototype.onMixerButton
