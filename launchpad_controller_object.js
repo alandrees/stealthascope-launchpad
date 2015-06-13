@@ -14,7 +14,7 @@ var Launchpad = Launchpad || {};
 /**\fn Launchpad.LaunchpadController
  *
  * LaunchpadController consutructor
- * 
+ *
  * @param options options object to set the options of the controller for
  * @param instance controller instance
  *
@@ -67,7 +67,7 @@ Launchpad.LaunchpadController = function(options, instance)
 }
 
 /**\fn Launchpad.LaunchpadController.prototype.init
- * 
+ *
  * Initalization function
  *
  * @param banks banks object generated externally
