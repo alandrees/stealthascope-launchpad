@@ -76,3 +76,21 @@ Launchpad.LaunchpadIO.prototype.init = function(launchpad_controller)
 
     this.enableAutoFlashing();
 }
+
+
+/**\fn Launchpad.LaunchpadIO.prototype.clear
+ *
+ * Clear all the LEDs
+ *
+ * @param None
+ *
+ * @returns None
+ */
+
+Launchpad.LaunchpadIO.prototype.clear = function()
+{
+    for(var i=0; i < 80; i++)
+    {
+	this.pendingLEDs[i] = Launchpad.Colour.OFF;
+    }
+}
