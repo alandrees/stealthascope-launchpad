@@ -278,7 +278,7 @@ Launchpad.GridPage.prototype.onGridButton = function(row, column, pressed)
 
 Launchpad.GridPage.prototype.updateGrid = function()
 {
-   for(var t=0; t < this.controller.options.tracks; t++)
+   for(var t = 0; t < this.controller.options.channels; t++)
    {
       this.updateTrackValue(t);
    }
