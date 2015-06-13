@@ -363,26 +363,18 @@ Launchpad.LaunchpadController.prototype.flush = function()
 }
 
 
-/**\fn Launchpad.LaunchpadController.prototype.flush
  *
- * Updates the controller with new data
  *
  *
  * @returns None
  */
 
-Launchpad.LaunchpadController.prototype.flush = function()
 {
-    if (this.showStealthascopeLogo)
     {
-	this.drawStealthascopeLogo();
     }
     else
     {
-	this.activePage.updateOutputState();
-    }
 
-    this.flushLEDs();
 
 }
 
@@ -436,7 +428,6 @@ Launchpad.LaunchpadController.prototype.drawStealthascopeLogo = function()
  * @param index (integer) top led index
  * @param colour (integer) color to set the LED to
  *
- * @returns None
  */
 
 Launchpad.LaunchpadController.prototype.setTopLED = function(index, colour)
