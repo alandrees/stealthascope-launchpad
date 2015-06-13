@@ -196,7 +196,7 @@ Launchpad.LaunchpadController.prototype.getChannelObserverFunc = function(channe
 {
     return function(value)
     {
-	varToStore[track] = value;
+	varToStore[channel] = value;
     }
 }
 
