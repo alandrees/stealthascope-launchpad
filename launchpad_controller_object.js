@@ -319,21 +319,13 @@ Launchpad.LaunchpadController.prototype.flush = function()
 }
 
 
-/**\fn Launchpad.LaunchpadController.prototype.setGridMappingMode
  *
- * This sets the grid mapping mode between the drum pad mode or the grid mode (in this case the grid mode
  *
- * @param None
  *
  * @returns None
  */
 
-Launchpad.LaunchpadController.prototype.setDrumMappingMode = function()
 {
-    this.send_midi(0xB0,
-		   0,
-		   1);
-}
 
 
 /**\fn Launchpad.LaunchpadController.prototype.setDutyCycle
