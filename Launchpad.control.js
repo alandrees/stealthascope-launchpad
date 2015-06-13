@@ -45,7 +45,7 @@ if(host.platformIsLinux())
 var controllers = new Array();
 var icc_network = new Array();
 
-for(var i = 0; i < Launchpad.options.devices; i++)
+for(var i = 0; i < 1; i++)
 {
     controllers[i] = new Launchpad.LaunchpadController(Launchpad.options, i);
 }
