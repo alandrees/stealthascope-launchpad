@@ -240,15 +240,15 @@ Launchpad.GridPage.prototype.onGridButton = function(row, column, pressed)
 
 	if (this.is_record_pressed)
 	{
-            this.controller.banks.trackbank.getChannel(channel).getClipLauncherSlots().record(scene);
+	    this.controller.banks.trackbank.getChannel(channel).getClipLauncherSlots().record(scene);
 	}
 	else if (this.is_edit_pressed)
 	{
-            this.controller.banks.trackbank.getChannel(channel).getClipLauncherSlots().showInEditor(scene);
+	    this.controller.banks.trackbank.getChannel(channel).getClipLauncherSlots().showInEditor(scene);
 	}
 	else
 	{
-            this.controller.banks.trackbank.getChannel(channel).getClipLauncherSlots().launch(scene);
+	    this.controller.banks.trackbank.getChannel(channel).getClipLauncherSlots().launch(scene);
 	}
     }
     else if (this.temp_mode === Launchpad.TEMPMODE.TRACK)
