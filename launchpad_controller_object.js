@@ -579,50 +579,12 @@ Launchpad.LaunchpadController.prototype.onMidi = function(status, data1, data2, 
 	    break;
 	}
     }
-}
 
-/**\fn Launchpad.LaunchpadController.prototype.textToPattern
- *
- * Format text into a bit pattern that can be displayed on 4-pixels height
- *
- * @param text to convert to a pattern
- *
- * @returns array containing a list of grid patterns to be executed
- */
-
-Launchpad.LaunchpadController.prototype.textToPattern = function(text)
-{
-    var result = [];
-
-    for(var i=0; i< text.length; i++)
     {
-	if (i != 0) result.push(0x0); // mandatory spacing
 
-	switch (text.charAt(i))
 	{
-        case '0':
-            result.push(0x6, 0x9, 0x6);
-            break;
-
-        case '1':
-            result.push(0x4, 0xF);
-            break;
-
-        case '2':
-            result.push(0x5, 0xB, 0x5);
-            break;
-
-        case '3':
-            result.push(0x9, 0x9, 0x6);
-            break;
-
-        case '4':
-            result.push(0xE, 0x3, 0x2);
-            break;
 	}
     }
-
-    return result;
 }
 
 /**\fn Launchpad.LaunchpadController.prototype.set_options
