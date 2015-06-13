@@ -269,7 +269,10 @@ Launchpad.LaunchpadController.prototype.animateLogo = function()
 
 Launchpad.LaunchpadController.prototype.exit = function()
 {
-    this.resetDevice();
+    for(var i = 0; i < this.launchpad_io.length; i++)
+    {
+	this.launchpad_io[i].resetDevice();
+    }
 }
 
 
