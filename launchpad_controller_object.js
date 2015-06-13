@@ -307,15 +307,28 @@ Launchpad.LaunchpadController.prototype.flush = function()
 }
 
 
+/**\fn Launchpad.LaunchpadController.prototype.setCellLED
  *
+ * Interface method for the controller IO subsystem to manipulate the state
+ * of the grid cell LEDs
  *
+ * @param column (integer) column index of LED
+ * @param row (integer) row index of LED
+ * @param value (integer) LED value to set
  *
  * @returns None
  */
 
+Launchpad.LaunchpadController.prototype.setCellLED = function(column, row, value)
 {
+    var output = this._map_io_object(column, row);
 
+    column = column % Launchpad.NUM_SCENES;
+    row = row % Launchpad.NUM_CHANNELS;
 
+    output.setCellLED(column,
+		      row,
+		      value);
 }
 
 
