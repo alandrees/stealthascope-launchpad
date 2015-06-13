@@ -353,7 +353,6 @@ Launchpad.LaunchpadController.prototype.flush = function()
 
  *
  *
- * @param None
  *
  * @returns None
  */
