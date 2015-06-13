@@ -297,7 +297,6 @@ Launchpad.GridPage.prototype.updateGrid = function()
 Launchpad.GridPage.prototype.updateTrackValue = function(track)
 {
     if(this.temp_mode === Launchpad.TEMPMODE.OFF){
-
 	var armed = this.controller.arm[track];
 	var selected = this.controller.isSelected[track];
 
