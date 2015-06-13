@@ -121,15 +121,15 @@ Launchpad.LaunchpadController.prototype.init = function(banks)
     }
 
     this.banks.trackbank.addCanScrollChannelsUpObserver(function(canScroll)
-						      {
-							  self.gridPage.canScrollTracksUp = canScroll;
-						      });
+							{
+							    self.gridPage.canScrollTracksUp = canScroll;
+							});
 
 
     this.banks.trackbank.addCanScrollChannelsDownObserver(function(canScroll)
-							{
-							    self.gridPage.canScrollTracksDown = canScroll;
-							});
+							  {
+							      self.gridPage.canScrollTracksDown = canScroll;
+							  });
 
     this.banks.trackbank.addCanScrollScenesUpObserver(function(canScroll)
 						      {
