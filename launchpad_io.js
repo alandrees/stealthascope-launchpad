@@ -241,3 +241,19 @@ Launchpad.LaunchpadIO.prototype.send_midi = function(status, data1, data2)
 
     }
 }
+
+
+/**\fn Launchpad.LaunchpadIO.prototype.setTopLED
+ *
+ * Set one of the top LEDs (navigation or mode LEDs)
+ *
+ * @param index (integer) top led index
+ * @param colour (integer) color to set the LED to
+ *
+ * @returns None
+ */
+
+Launchpad.LaunchpadIO.prototype.setTopLED = function(index, colour)
+{
+    this.pendingLEDs[Launchpad.LED.TOP + index] = colour;
+}
