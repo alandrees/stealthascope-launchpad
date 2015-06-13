@@ -400,7 +400,7 @@ Launchpad.GridPage.prototype.setTempMode = function(mode)
     this.temp_mode = mode;
 
     // Update indications in the app
-    for(var p = 0; p < 8; p++)
+    for(var p = 0; p < this.controller.options.channels; p++)
     {
 	var track = this.controller.banks.trackbank.getChannel(p);
     }
