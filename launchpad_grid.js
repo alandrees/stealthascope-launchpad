@@ -382,7 +382,6 @@ Launchpad.GridPage.prototype.setColumn = function(column, colour)
 }
 
 
-
 /**\fn Launchpad.GridPage.prototype.setTempMode
  *
  * Set the momentary/instantanous/temporary mode for the page
