@@ -115,3 +115,20 @@ Launchpad.LaunchpadIO.prototype.resetDevice = function()
 
     this.flushLEDs();
 }
+
+
+/**\fn Launchpad.LaunchpadIO.prototype.enableAutoFlashing
+ *
+ * Enable device-handled flashing (minimizes the MIDI traffic on the bus)
+ *
+ * @param None
+ *
+ * @returns None
+ */
+
+Launchpad.LaunchpadIO.prototype.enableAutoFlashing = function()
+{
+    this.send_midi(0xB0,
+		   0,
+		   0x28);
+}
