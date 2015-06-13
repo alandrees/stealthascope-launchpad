@@ -23,11 +23,9 @@ var Launchpad = Launchpad || {};
 
 Launchpad.LaunchpadController = function(options, instance)
 {
-    if(typeof midi_instance === 'undefined') var midi_instance = instance;
 
     this.set_options(options);
     this.instance = instance;
-    this.midi_instance = midi_instance;
 
     this.arm = initArray(0, 8);
     this.trackExists = initArray(0, 8);
