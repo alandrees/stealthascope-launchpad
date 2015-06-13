@@ -94,3 +94,24 @@ Launchpad.LaunchpadIO.prototype.clear = function()
 	this.pendingLEDs[i] = Launchpad.Colour.OFF;
     }
 }
+
+
+/**\fn Launchpad.LaunchpadController.prototype.resetDevice
+ *
+ * send a message to the device to reset the whole unit
+ *
+ * @param None
+ *
+ * @returns None
+ */
+
+Launchpad.LaunchpadIO.prototype.resetDevice = function()
+{
+    this.send_midi(0xB0,
+		   0,
+		   0);
+
+    this.clear();
+
+    this.flushLEDs();
+}
