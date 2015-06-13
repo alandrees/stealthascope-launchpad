@@ -23,6 +23,7 @@ var Launchpad = Launchpad || {};
 
 Launchpad.LaunchpadController = function(options, instance)
 {
+    var self = this;
 
     this.set_options(options);
     this.instance = instance;
