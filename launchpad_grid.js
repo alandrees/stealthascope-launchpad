@@ -302,11 +302,10 @@ Launchpad.GridPage.prototype.updateTrackValue = function(track)
 
 	for(var scene = 0; scene < this.controller.options.scenes; scene++)
 	{
-
 	    var row = this.mixerAlignedGrid ? scene : track;
 	    var column = this.mixerAlignedGrid ? track : scene;
 
-	    var index = track + scene * 8;
+	    var index = track + scene * this.controller.options.tracks;
 
 	    if(!armed)
 	    {
