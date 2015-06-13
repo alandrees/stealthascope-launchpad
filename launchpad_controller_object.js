@@ -28,15 +28,23 @@ Launchpad.LaunchpadController = function(options, instance)
     this.set_options(options);
     this.instance = instance;
 
-    this.arm = initArray(0, 8);
-    this.trackExists = initArray(0, 8);
-    this.isSelected = initArray(0, 8);
+    this.arm = initArray(0, this.options.tracks);
+    this.trackExists = initArray(0, this.options.tracks);
+
+    this.isSelected = initArray(0, this.options.tracks);
+
+    this.hasContent = initArray(0, this.options.channels * this.options.scenes);
+
+    this.isPlaying = initArray(0, this.options.channels * this.options.scenes);
+
+    this.isRecording = initArray(0, this.options.channels * this.options.scenes);
+
+    this.isQueued = initArray(0, this.options.channels * this.options.scenes);
+
+    this.launchpad_io = Array(this.options.devices);
+
     this.gridPage = new Launchpad.GridPage(this);
 
-    this.hasContent = initArray(0, 64);
-    this.isPlaying = initArray(0, 64);
-    this.isRecording = initArray(0, 64);
-    this.isQueued = initArray(0, 64);
 
     //these coordinates correspond to the top left corner of the highlighting section
 /*
