@@ -382,3 +382,28 @@ Launchpad.LaunchpadIO.prototype.flushLEDs = function()
 	}
     }
 }
+
+
+/**\fn Launchpad.LaunchpadIO.prototype.set_options
+ *
+ * Sets controller options
+ *
+ * @param options options with which to set (use defaults if not set)
+ *
+ * @returns None
+ */
+
+Launchpad.LaunchpadIO.prototype.set_options = function(options)
+{
+    this.options = { 'tracks'   : Launchpad.NUM_TRACKS,
+		     'scenes'   : Launchpad.NUM_SCENES,
+		     'instance' : 1 };
+
+    if(typeof options === 'object')
+    {
+	for(var option in options)
+	{
+	    this.options[option] = options[option];
+	}
+    }
+}
