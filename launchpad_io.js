@@ -193,3 +193,27 @@ Launchpad.LaunchpadIO.prototype.setDutyCycle = function(numerator, denominator)
 		       16 * (numerator - 9) + (denominator - 3));
     }
 }
+
+
+/**\fn Launchpad.LaunchpadIO.prototype.midi_callback
+ *
+ * Midi callback wrapper to handle midi input to be passed to handler function
+ *
+ * @param status (integer) MIDI status byte
+ * @param data1 (integer) MIDI data1 byte
+ * @param data2 (integer) MIDI data2 byte
+ *
+ * @returns None
+ */
+
+Launchpad.LaunchpadIO.prototype.midi_callback = function(status, data1, data2)
+{
+    if(typeof this.ctrl.onMidi === 'function')
+    {
+	this.ctrl.onMidi(status,
+			 data1,
+			 data2,
+			 this.grid_x,
+			 this.grid_y);
+    }
+}
