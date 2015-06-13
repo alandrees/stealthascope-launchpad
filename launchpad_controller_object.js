@@ -335,94 +335,17 @@ Launchpad.LaunchpadController.prototype.flush = function()
 }
 
 
-/**\fn Launchpad.LaunchpadController.prototype.onMidi
  *
- * Callback function to be called when midi input is detected
  *
- * @param status (integer) status byte (type/channel) of incoming message
- * @param data1 (integer) data1 byte of incoming message
- * @param data2 (integer) data2 byte of incoming message
  *
  * @returns None
  */
 
-Launchpad.LaunchpadController.prototype.onMidi = function(status, data1, data2)
 {
-    if (MIDIChannel(status) != 0) return;
-
-    if (isChannelController(status))
     {
-	var isPressed = data2 > 0;
-
-	switch(data1)
-	{
-	case Launchpad.TopButton.SESSION:
-	    if (isPressed)
-	    {
-		if(this.activePage.name !== "grid"){
-		    this.setActivePage(this.gridPage);
-		}
-		else
-		{
-		    this.gridPage.setTempMode(Launchpad.TEMPMODE.TRACK);
-		}
-	    }
-	    else
-	    {
-		this.gridPage.setTempMode(Launchpad.TEMPMODE.OFF);
-	    }
-
-	    break;
-
-        case Launchpad.TopButton.USER1:
-	    if (isPressed)
-	    {
-		this.gridPage.setTempMode(Launchpad.TEMPMODE.STOP);
-	    }
-	    else
-	    {
-		this.gridPage.setTempMode(Launchpad.TEMPMODE.OFF);
-	    }
-
-	    break;
-
-        case Launchpad.TopButton.USER2:
-            break;
-
-        case Launchpad.TopButton.MIXER:
-	    this.activePage.onMixerButton(isPressed);
-            break;
-
-        case Launchpad.TopButton.CURSOR_LEFT:
-            this.activePage.onLeft(isPressed);
-            break;
-
-        case Launchpad.TopButton.CURSOR_RIGHT:
-            this.activePage.onRight(isPressed);
-            break;
-
-        case Launchpad.TopButton.CURSOR_UP:
-            this.activePage.onUp(isPressed);
-            break;
-
-        case Launchpad.TopButton.CURSOR_DOWN:
-            this.activePage.onDown(isPressed);
-            break;
-	}
     }
-
-    if (isNoteOn(status) || isNoteOff(status, data2))
     {
-	var row = data1 >> 4;
-	var column = data1 & 0xF;
-
-	if (column < 8)
 	{
-	    this.activePage.onGridButton(row, column, data2 > 0);
-	}
-	else
-	{
-	    this.activePage.onSceneButton(row, data2 > 0);
 	}
     }
 }
