@@ -390,14 +390,27 @@ Launchpad.LaunchpadController.prototype.setRightLED = function(index, value, ctr
 }
 
 
+/**\fn Launchpad.LaunchpadController.prototype.clear
  *
+ * Interface method for the controller IO subsystem to clear an entire controller grid of values
  *
+ * @param index (integer) controller index to clear [OPTIONAL]
  *
  * @returns None
  */
 
+Launchpad.LaunchpadController.prototype.clear = function(index)
 {
+    if(typeof index === 'undefined')
     {
+	for(var i = 0; i < this.launchpad_io.length; i++)
+	{
+	    this.launchpad_io[i].clear();
+	}
+    }
+    else
+    {
+	this.launchpad_io[i].clear();
     }
 }
 
