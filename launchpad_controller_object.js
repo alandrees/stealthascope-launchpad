@@ -362,17 +362,29 @@ Launchpad.LaunchpadController.prototype.setTopLED = function(index, value, ctrl)
 }
 
 
+/**\fn Launchpad.LaunchpadController.prototype.setRightLED
  *
+ * Interface method for the controller IO subsystem to manipulate the state
+ * of the right-side LEDs
  *
+ * @param index (integer) control index to update on the controller
+ * @param value (integer) value to set the control to
+ * @param ctrl (integer) controller
  *
  * @returns None
  */
 
+Launchpad.LaunchpadController.prototype.setRightLED = function(index, value, ctrl)
 {
+    if(typeof ctrl === 'integer')
     {
+	this.launchpad_io[ctrl].setRightLED(index, value);
     }
+    else
     {
+	for(var i = 0; i < this.launchpad_io.length; i++)
 	{
+	    this.launchpad_io[i].setRightLED(index, value);
 	}
     }
 }
