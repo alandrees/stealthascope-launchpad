@@ -15,6 +15,7 @@ console.log = function(string)
 }
 
 load("launchpad_controller_object.js");
+load('launchpad_page.js');
 load("launchpad_constants.js");
 load("launchpad_grid.js");
 load("launchpad_options.js");
