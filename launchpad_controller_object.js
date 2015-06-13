@@ -415,19 +415,47 @@ Launchpad.LaunchpadController.prototype.clear = function(index)
 }
 
 
+/**\fn Launchpad.LaunchpadController.prototype._map_io_object
  *
+ * Maps grid coordinates to a particularly underlying physical controller object
  *
+ * @param grid_x (integer) x-coordinate of the vector pair
+ * @param grid_y (integer) y-coordinate of the vector pair
  *
- * @returns None
+ * @returns (LaunchpadIO) LaunchpadIO object representing a physical controller
  */
 
+Launchpad.LaunchpadController.prototype._map_io_object = function(grid_x, grid_y)
 {
+    var ctrl_x = 0;
+    var ctrl_y = 0;
+
+    if(this.launchpad_io.length === 1)
     {
+	return this.launchpad_io[0];
     }
     else
     {
+	if((grid_x) % Launchpad.NUM_TRACKS == 0)
+	{
+	    ctrl_x = grid_x / Launchpad.NUM_TRACKS;
+	}
+	else
+	{
+	    ctrl_x = ( grid_x - ((grid_x) % Launchpad.NUM_TRACKS) ) / Launchpad.NUM_TRACKS
+	}
 
+	if((grid_y) % Launchpad.NUM_SCENES == 0)
+	{
+	    ctrl_y = grid_y / Launchpad.NUM_SCENES;
+	}
+	else
+	{
+	    ctrl_y = ( grid_y - ((grid_y) % Launchpad.NUM_SCENES) ) / Launchpad.NUM_SCENES
+	}
 
+	return this.io_grid_array[ctrl_x][ctrl_y];
+    }
 }
 
 
