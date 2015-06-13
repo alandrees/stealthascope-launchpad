@@ -273,3 +273,20 @@ Launchpad.LaunchpadIO.prototype.setRightLED = function(index, colour)
 {
     this.pendingLEDs[Launchpad.LED.SCENE + index] = colour;
 }
+
+
+/**\fn Launchpad.LaunchpadIO.prototype.setCellLED
+ *
+ * Set one of the grid LEDs
+ *
+ * @param column (integer) track of the grid LED
+ * @param row (integer) scene of the grid LED
+ * @param colour (integer) color to set the LED to
+ *
+ * @returns None
+ */
+
+Launchpad.LaunchpadIO.prototype.setCellLED = function(column, row, colour)
+{
+    this.pendingLEDs[row * Launchpad.NUM_CHANNELS + column] = colour;
+}
