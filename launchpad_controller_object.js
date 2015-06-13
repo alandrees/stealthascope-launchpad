@@ -502,21 +502,6 @@ Launchpad.LaunchpadController.prototype.drawStealthascopeLogo = function()
 }
 
 
-/**\fn Launchpad.LaunchpadController.prototype.setTopLED
- *
- * Set one of the top LEDs (navigation or mode LEDs)
- *
- * @param index (integer) top led index
- * @param colour (integer) color to set the LED to
- *
- */
-
-Launchpad.LaunchpadController.prototype.setTopLED = function(index, colour)
-{
-    this.pendingLEDs[Launchpad.LED.TOP + index] = colour;
-}
-
-
 /**\fn Launchpad.LaunchpadController.prototype.setRightLED
  *
  * Sets the scene-firing LEDs on the far right
