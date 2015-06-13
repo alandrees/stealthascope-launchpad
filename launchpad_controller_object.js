@@ -351,20 +351,15 @@ Launchpad.LaunchpadController.prototype.flush = function()
 }
 
 
-/**\fn Launchpad.LaunchpadController.prototype.clear
  *
- * Clear all the LEDs
  *
  * @param None
  *
  * @returns None
  */
 
-Launchpad.LaunchpadController.prototype.clear = function()
 {
-    for(var i=0; i<80; i++)
     {
-	this.pendingLEDs[i] = Launchpad.Colour.OFF;
     }
 }
 
@@ -398,7 +393,6 @@ Launchpad.LaunchpadController.prototype.flush = function()
  *
  * Draws the Stealthascope logo
  *
- * @param None
  *
  * @returns None
  */
