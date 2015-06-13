@@ -290,3 +290,95 @@ Launchpad.LaunchpadIO.prototype.setCellLED = function(column, row, colour)
 {
     this.pendingLEDs[row * Launchpad.NUM_CHANNELS + column] = colour;
 }
+
+
+/**\fn Launchpad.LaunchpadController.prototype.flushLEDs
+ *
+ * Flush all the output to the controller, updating the LEDs
+ *
+ * @param None
+ *
+ * @returns None
+ */
+
+Launchpad.LaunchpadIO.prototype.flushLEDs = function()
+{
+    if(typeof this.flushcount === 'undefined')
+    {
+	for(var x in this.pendingLEDs)
+	{
+	    if(typeof this.pendingLEDs[x] === 'object')
+	    {
+		dump(this.pendingLEDs[x]);
+	    }
+	}
+	this.flushcount = true;
+    }
+
+
+    var changedCount = 0;
+
+    for(var i = 0; i < 80; i++)
+    {
+	if (this.pendingLEDs[i] != this.activeLEDs[i])
+	{
+	    changedCount++;
+	}
+    }
+
+    if (changedCount == 0)
+    {
+	return;
+    }
+
+    if (changedCount > 30)
+    {
+	for(var i = 0; i<80; i+=2)
+	{
+	    this.send_midi(0x92,
+			   this.pendingLEDs[i],
+			   this.pendingLEDs[i+1])
+
+	    this.activeLEDs[i] = this.pendingLEDs[i];
+	    this.activeLEDs[i+1] = this.pendingLEDs[i+1];
+	}
+
+	this.send_midi(0xB0,
+		       104 + 7,
+		       this.activeLEDs[79]); // send dummy message to leave optimized mode
+    }
+    else
+    {
+	for(var i = 0; i < 80; i++)
+	{
+	    if (this.pendingLEDs[i] != this.activeLEDs[i])
+	    {
+		this.activeLEDs[i] = this.pendingLEDs[i];
+
+		var colour = this.activeLEDs[i];
+
+		if (i < 64) // Main Grid
+		{
+		    var column = i & 0x7;
+		    var row = i >> 3;
+
+		    this.send_midi(0x90,
+				   row * 16 + column,
+				   colour);
+		}
+		else if (i < 72)    // Right buttons
+		{
+		    this.send_midi(0x90,
+				   8 + (i - 64) * 16,
+				   colour);
+		}
+		else    // Top buttons
+		{
+		    this.send_midi(0xB0,
+				   104 + (i - 72),
+				   colour);
+		}
+	    }
+	}
+    }
+}
