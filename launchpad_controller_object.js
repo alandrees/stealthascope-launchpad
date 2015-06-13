@@ -502,23 +502,13 @@ Launchpad.LaunchpadController.prototype.drawStealthascopeLogo = function()
 }
 
 
-/**\fn Launchpad.LaunchpadController.prototype.setCellLED
  *
- * Set one of the grid LEDs
  *
- * @param column (integer) track of the grid LED
- * @param row (integer) scene of the grid LED
- * @param colour (integer) color to set the LED to
  *
  * @returns None
  */
 
-Launchpad.LaunchpadController.prototype.setCellLED = function(column, row, colour)
 {
-    this.pendingLEDs[row * 8 + column] = colour;
-}
-
-
 /**\fn Launchpad.LaunchpadController.prototype.flushLEDs
  *
  * Flush all the output to the controller, updating the LEDs
