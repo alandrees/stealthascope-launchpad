@@ -51,3 +51,28 @@ Launchpad.LaunchpadIO = function(options, grid_x, grid_y, lmidi_in, midi_out )
 
     this.force_optimized_flush = false;
 }
+
+
+/**\fn Launchpad.LaunchpadIO.prototype.init
+ *
+ * Initialization function
+ *
+ * @param launchpad_controller (LaunchpadControlObject) launchpad controller object which implements a midi in function
+ *
+ * @Returns None
+ */
+
+Launchpad.LaunchpadIO.prototype.init = function(launchpad_controller)
+{
+    var self = this;
+
+    this.ctrl = launchpad_controller
+
+    host.getMidiInPort(this.midi_in).setMidiCallback(function(status, data1, data2){self.midi_callback(status, data1, data2);});
+
+    this.resetDevice();
+
+    this.setGridMappingMode();
+
+    this.enableAutoFlashing();
+}
