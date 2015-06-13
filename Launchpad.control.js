@@ -36,10 +36,10 @@ for(var i = 1; i < Launchpad.options.devices; i++)
 
 if(host.platformIsLinux())
 {
-	for(var i = 1; i < Launchpad.options.devices; i++)
-	{
-	   host.addDeviceNameBasedDiscoveryPair(["Launchpad S " + + i.toString() + " MIDI 1"], ["Launchpad S " + + i.toString() + " MIDI 1"]);
-	}
+    for(var i = 1; i < Launchpad.options.devices; i++)
+    {
+	host.addDeviceNameBasedDiscoveryPair(["Launchpad S " + + i.toString() + " MIDI 1"], ["Launchpad S " + + i.toString() + " MIDI 1"]);
+    }
 }
 
 var controllers = new Array();
