@@ -443,7 +443,6 @@ Launchpad.LaunchpadController.prototype.setTopLED = function(index, colour)
  * @param index index to send to
  * @param colour colour to set the LED to
  *
- * @returns None
  */
 
 Launchpad.LaunchpadController.prototype.setRightLED = function(index, colour)
