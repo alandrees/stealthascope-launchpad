@@ -327,30 +327,10 @@ Launchpad.LaunchpadController.prototype.flush = function()
 
 {
 
-
-/**\fn Launchpad.LaunchpadController.prototype.setDutyCycle
- *
- * Sets the LED duty cycle by passing a numerator and denominator
- *
- * @param numerator duty cycle numerator
- * @param denominator duty cycle denominator
- *
- * @returns None
- */
-
-Launchpad.LaunchpadController.prototype.setDutyCycle = function(numerator, denominator)
-{
-    if (numerator < 9)
     {
-	this.send_midi(0xB0,
-		       0x1E,
-		       16 * (numerator - 1) + (denominator - 3));
     }
     else
     {
-	this.send_midi(0xB0,
-		       0x1F,
-		       16 * (numerator - 9) + (denominator - 3));
     }
 }
 
