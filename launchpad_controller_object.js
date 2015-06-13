@@ -140,9 +140,11 @@ Launchpad.LaunchpadController.prototype.init = function(banks)
 							{
 							    self.gridPage.canScrollScenesDown = canScroll;
 							});
-    this.resetDevice();
-    this.setGridMappingMode();
-    this.enableAutoFlashing();
+
+    for(var i = 0; i < this.launchpad_io.length; i++)
+    {
+	this.launchpad_io[i].init(self);
+    }
 
     if(this.showStealthascopeLogo)
     {
