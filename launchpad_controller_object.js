@@ -580,12 +580,24 @@ Launchpad.LaunchpadController.prototype.onMidi = function(status, data1, data2, 
 	}
     }
 
+    if (isNoteOn(status) || isNoteOff(status, data2))
     {
+	var row = data1 >> 4;
+	var column = data1 & 0xF;
 
+	if (column < Launchpad.NUM_TRACKS)
 	{
+	    row = (row + (grid_y * Launchpad.NUM_SCENES));
+	    column = (column + (grid_x * Launchpad.NUM_TRACKS));
+	    this.activePage.onGridButton(row, column, data2 > 0);
+	}
+	else
+	{
+	    this.activePage.onSceneButton(row + (grid_x * Launchpad.NUM_TRACKS), data2 > 0);
 	}
     }
 }
+
 
 /**\fn Launchpad.LaunchpadController.prototype.set_options
  *
