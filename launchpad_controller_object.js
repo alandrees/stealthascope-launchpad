@@ -275,25 +275,35 @@ Launchpad.LaunchpadController.prototype.exit = function()
     }
 }
 
-
-/**\fn Launchpad.LaunchpadController.prototype.resetDevice
+/**\fn Launchpad.LaunchpadController.prototype.flush
  *
- * send a message to the device to reset the whole unit
+ * Updates the controller with new data
  *
  * @param None
  *
  * @returns None
  */
 
-Launchpad.LaunchpadController.prototype.resetDevice = function()
+Launchpad.LaunchpadController.prototype.flush = function()
 {
-    this.send_midi(0xB0,
-		   0,
-		   0);
+    if (this.showStealthascopeLogo)
+    {
+	this.drawStealthascopeLogo();
+    }
+    else
+    {
+	if(typeof this.activePage.updateOutputState === 'function')
+	{
+	    this.activePage.updateOutputState();
+	}
+    }
 
-    this.clear();
+    /*TODO: ADD LOGIC TO DETERMINE IF ONLY ONE CONTROLLER REQUIRES UPDATING*/
 
-    this.flushLEDs();
+    for(var i = 0; i < this.launchpad_io.length; i++)
+    {
+	this.launchpad_io[i].flushLEDs();
+    }
 }
 
 
