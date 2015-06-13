@@ -43,8 +43,29 @@ Launchpad.LaunchpadController = function(options, instance)
 
     this.launchpad_io = Array(this.options.devices);
 
+    this.io_grid_array = Launchpad.create_2d_array(this.options.layout_order.length,
+						   this.options.layout_order[0].length);
+
     this.gridPage = new Launchpad.GridPage(this);
 
+    var lp_io;
+
+    var lp_io_counter = 0;
+
+    for(var x = 0; x < this.options.layout_order.length; x++)
+    {
+	for(var y = 0; y < this.options.layout_order[0].length; y++)
+	{
+	    lp_io = new Launchpad.LaunchpadIO(this.options,
+					      x,
+					      y,
+					      lp_io_counter);
+
+	    this.launchpad_io[lp_io_counter++] = lp_io;
+
+	    this.io_grid_array[x][y] = lp_io;
+	}
+    }
 
     //these coordinates correspond to the top left corner of the highlighting section
 /*
