@@ -89,8 +89,6 @@ Launchpad.LaunchpadController.prototype.init = function(banks)
 {
     var self = this;
 
-    host.getMidiInPort(this.midi_instance).setMidiCallback(function(status, data1, data2){self.onMidi(status, data1, data2);});
-
     this.banks = {};
 
     if(typeof banks === 'undefined')
